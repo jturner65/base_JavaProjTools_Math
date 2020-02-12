@@ -1,6 +1,6 @@
 package base_Math_Objects.vectorObjs.floats;
 
-import base_UI_Objects.IRenderInterface;
+import base_JavaProjTools_IRender.base_Render_Interface.IRenderInterface;
 
 public class myCntlPtf extends myPointf {
 	public int ID;
