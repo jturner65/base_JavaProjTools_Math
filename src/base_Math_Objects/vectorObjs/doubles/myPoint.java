@@ -352,6 +352,39 @@ public class myPoint {
 		for(int i=0;i<pointNBC.length;++i) {	res._add(myPoint._mult(cntlPts[i], pointNBC[i]));}	
 		return res;
 	}
+	
+	/**
+	 * calc the rotation of this point by angle a around G on plane described by I, in direction inferred by J(tangent)
+	 * @param a
+	 * @param I
+	 * @param J
+	 * @param G
+	 * @return
+	 */
+	public myPoint rotMeAroundPt(double a, myVector I, myVector J, myPoint G) {
+		double x= myVector._dot(new myVector(G,this),myVector._unit(I)), y=myVector._dot(new myVector(G,this),myVector._unit(J)); 
+		double c=Math.cos(a), s=Math.sin(a); 
+		double iXVal = x*c-x-y*s, jYVal= x*s+y*c-y;			
+		return myPoint._add(this,iXVal,I,jYVal,J); 
+	}; 
+	
+	/**
+	 * returns rotated version of this point by angle(CP,CR) parallel to plane (C,P,R)
+	 * @param C
+	 * @param P
+	 * @param R
+	 * @return this point rotated
+	 */
+	public myPoint rotMeAroundPt(myPoint C, myPoint P, myPoint R) { // returns rotated version of this point by angle(CP,CR) parallel to plane (C,P,R)
+		myVector I0=myVector._unit(C,P), I1=myVector._unit(C,R), V=new myVector(C,this); 
+		double c=myPoint._dist(I0,I1), s=Math.sqrt(1.-(c*c)); 
+		if(Math.abs(s)<0.00001) return this;		
+		myVector J0=myVector._add(myVector._mult(I1,1./s),myVector._mult(I0,-c/s));  
+		myVector J1=myVector._add(myVector._mult(I0,-s),myVector._mult(J0,c));  
+		double x=V._dot(I0), y=V._dot(J0);  
+		return myPoint._add(this,x,myVector._sub(I1,I0),y,myVector._sub(J1,J0)); 
+	} 	
+
 
 	
 //	/**

@@ -182,7 +182,14 @@ public class myVectorf extends myPointf{
 		return res;		
 	}
 
-	
+	/**
+	 * undefined for a vector - use rotMeAroundAxis
+	 */
+	public final myPointf rotMeAroundPt(float a, myVectorf I, myVectorf J, myPointf G) {return this;}
+	/**
+	 * undefined for a vector - rotMeAroundAxis
+	 */
+	public final myPointf rotMeAroundPt(myPointf C, myPointf P, myPointf R)  {return this;}
 	/**
 	 * Find the angle between two vectors - Note this version is for 2D - relies on neither vector being coplanar with (0,0,1);
 	 * @param U

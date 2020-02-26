@@ -220,10 +220,7 @@ public class MyMathUtils {
 			sum += s * M[0][i] * (detMat(minor)); 										
 		}
 		return(sum); //returns determinant value. once stack is finished, returns final determinant.
-	}//detMat
-
-	
-	
+	}//detMat	
 	
 	/**
 	 * quake inv sqrt calc - about 30% faster than 
@@ -456,6 +453,35 @@ public class MyMathUtils {
      */
     public static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
    
+	/**
+	 * 2d range checking of point
+	 * @param x
+	 * @param y
+	 * @param minX
+	 * @param minY
+	 * @param maxX
+	 * @param maxY
+	 * @return
+	 */
+	public synchronized static boolean ptInRange(double x, double y, double minX, double minY, double maxX, double maxY) {return ((x > minX)&&(x <= maxX)&&(y > minY)&&(y <= maxY)); }	
+	
+	/**
+	 * n-dim range checking of values
+	 * @param vals array of vals to check
+	 * @param min array of min bounds
+	 * @param max array of max bounds
+	 * @return whether entire value is within bounds
+	 */
+	public synchronized static <T extends Comparable<T>> boolean ptInRange(T[] vals, T[] mins, T[] maxs) {
+		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
+		int len = vals.length;
+		for(int i=0;i<len;++i) {
+			if((vals[i].compareTo(mins[i]) < 0)  || (vals[i].compareTo(maxs[i]) > 0)){	return false;}		
+		}		
+		return true;
+	}
+
+    
      
 }//math utils
 

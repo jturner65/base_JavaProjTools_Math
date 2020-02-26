@@ -375,7 +375,43 @@ public class myPointf {
 		for(int i=0;i<pointNBC.length;++i) {	res._add(myPointf._mult(cntlPts[i], pointNBC[i]));}	
 		return res;
 	}
+	
+	/**
+	 * calc the rotation of this point by angle a around G on plane described by I, in direction inferred by J(tangent)
+	 * @param a
+	 * @param I
+	 * @param J
+	 * @param G
+	 * @return
+	 */
+	public myPointf rotMeAroundPt(float a, myVectorf I, myVectorf J, myPointf G) {
+		double x= myVectorf._dot(new myVectorf(G,this),myVectorf._unit(I)), y=myVectorf._dot(new myVectorf(G,this),myVectorf._unit(J)); 
+		double c=Math.cos(a), s=Math.sin(a); 
+		float iXVal = (float) (x*c-x-y*s), jYVal= (float) (x*s+y*c-y);			
+		return myPointf._add(this,iXVal,I,jYVal,J); 
+	}; 
+	
+	
+	/**
+	 * returns rotated version of this point by angle(CP,CR) parallel to plane (C,P,R)
+	 * @param C
+	 * @param P
+	 * @param R
+	 * @return this point rotated
+	 */
+	public myPointf rotMeAroundPt(myPointf C, myPointf P, myPointf R) { // returns rotated version of Q by angle(CP,CR) parallel to plane (C,P,R)
+		myVectorf I0=myVectorf._unit(C,P), I1=myVectorf._unit(C,R), V=new myVectorf(C,this); 
+		double c=myPointf._dist(I0,I1), s=Math.sqrt(1.-(c*c)); 
+		if(Math.abs(s)<0.00001) return this;		
+		myVectorf J0=myVectorf._add(myVectorf._mult(I1,1./s),myVectorf._mult(I0,-c/s));  
+		myVectorf J1=myVectorf._add(myVectorf._mult(I0,-s),myVectorf._mult(J0,c));  
+		float x=V._dot(I0), y=V._dot(J0);  
+		return myPointf._add(this,x,myVectorf._sub(I1,I0),y,myVectorf._sub(J1,J0)); 
+	} 	
 
+	
+	
+	
 //	/**
 //	 * render this point as a black sphere in 3d
 //	 * @param pa : render interface capable of drawing this point

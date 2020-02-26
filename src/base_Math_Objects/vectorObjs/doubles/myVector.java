@@ -198,8 +198,17 @@ public class myVector extends myPoint{
 				(uxzC1-uyS) 	  * this.x + (uyzC1+uxS)		* this.y + (uz2*oneMC + cThet) * this.z);
 		
 		return res;		
-	}
-	
+	}	
+
+	/**
+	 * undefined for a vector - use rotMeAroundAxis
+	 */
+	public final myPoint rotMeAroundPt(float a, myVector I, myVector J, myPoint G) {return this;}
+	/**
+	 * undefined for a vector - rotMeAroundAxis
+	 */
+	public final myPoint rotMeAroundPt(myPoint C, myPoint P, myPoint R)  {return this;}
+
 	/**
 	 * Find the angle between two vectors - Note this version is for 2D - relies on neither vector being coplanar with (0,0,1);
 	 * @param U
