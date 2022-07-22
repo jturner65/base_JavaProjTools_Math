@@ -16,32 +16,32 @@ import base_Math_Objects.vectorObjs.floats.myVectorf;
  */
 public class MyMathUtils {
 	public static final double 
-		Pi = Math.PI,
-		halfPi = .5*Pi,
-		twoPi = 2.0*Pi,
-		threeQtrPI = .75 * Pi,
-		fifthPI = .2 * Pi,
-		sqrt2 = Math.sqrt(2.0),
-		invSqrt2 = .5 * sqrt2,
-		sqrt3 = Math.sqrt(3.0),
-		invSqrt3 = 1.0/sqrt3,
-		eps = 1e-8,
-		log2 = Math.log(2.0),
-		log10 = Math.log(10.0);
+		PI = Math.PI,
+		HALF_PI = .5*PI,
+		TWO_PI = 2.0*PI,
+		THREE_QTR_PI = .75 * PI,
+		FIFTH_PI = .2 * PI,
+		SQRT_2 = Math.sqrt(2.0),
+		INV_SQRT_2 = .5 * SQRT_2,
+		SQRT_3 = Math.sqrt(3.0),
+		INV_SQRT_3 = 1.0/SQRT_3,
+		EPS = 1e-8,
+		LOG_2 = Math.log(2.0),
+		LOG_10 = Math.log(10.0);
 
 	public static final float 
-		Pi_f = (float)Pi,
-		halfPi_f = (float) halfPi,
-		twoPi_f = (float) twoPi,
-		threeQtrPI_f = (float) threeQtrPI,
-		fifthPI_f = (float) fifthPI,
-		sqrt2_f = (float) sqrt2,
-		invSqrt2_f = (float) invSqrt2,
-		sqrt3_f = (float) sqrt3,
-		invSqrt3_f = (float) invSqrt3,
-		eps_f = (float) eps,
-		log2_f = (float)log2,
-		log10_f = (float)log10;
+		PI_F = (float)PI,
+		HALF_PI_F = (float) HALF_PI,
+		TWO_PI_F = (float) TWO_PI,
+		THREE_QTR_PI_F = (float) THREE_QTR_PI,
+		FIFTH_PI_F = (float) FIFTH_PI,
+		SQRT_2_F = (float) SQRT_2,
+		INV_SQRT_2_F = (float) INV_SQRT_2,
+		SQRT_3_F = (float) SQRT_3,
+		INV_SQRT_3_F = (float) INV_SQRT_3,
+		EPS_F = (float) EPS,
+		LOG_2_F = (float)LOG_2,
+		LOG_10_F = (float)LOG_10;
 	
 
     // numbers greater than 10^MAX_DIGITS_10 or e^MAX_DIGITS_EXP are considered unsafe ('too big') for floating point operations
@@ -121,12 +121,12 @@ public class MyMathUtils {
 	 * @return axis-angle representation of orientation
 	 */
 	public static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
-		float rt2 = .5f*sqrt2_f;//p.fsqrt2; 
+		float rt2 = .5f*SQRT_2_F;
 		float angle,x=rt2,y=rt2,z=rt2,s;
 		float fyrx = -orientation[O_FWD].y+orientation[O_RHT].x,
 			uxfz = -orientation[O_UP].x+orientation[O_FWD].z,
 			rzuy = -orientation[O_RHT].z+orientation[O_UP].y;
-		float epsValCalcSq = eps_f*eps_f;
+		float epsValCalcSq = EPS_F*EPS_F;
 		if (((fyrx*fyrx) < epsValCalcSq) && ((uxfz*uxfz) < epsValCalcSq) && ((rzuy*rzuy) < epsValCalcSq)) {			//checking for rotational singularity
 			// angle == 0
 			float fyrx2 = orientation[O_FWD].y+orientation[O_RHT].x,
@@ -135,22 +135,22 @@ public class MyMathUtils {
 				fxryuz3 = orientation[O_FWD].x+orientation[O_RHT].y+orientation[O_UP].z-3;
 			if (((fyrx2*fyrx2) < 1)	&& (fzux2*fzux2 < 1) && ((rzuy2*rzuy2) < 1) && ((fxryuz3*fxryuz3) < 1)) {	return new float[]{0,1,0,0}; }
 			// angle == pi
-			angle = Pi_f;
+			angle = PI_F;
 			float fwd2x = (orientation[O_FWD].x+1)/2.0f,rht2y = (orientation[O_RHT].y+1)/2.0f,up2z = (orientation[O_UP].z+1)/2.0f,
 				fwd2y = fyrx2/4.0f, fwd2z = fzux2/4.0f, rht2z = rzuy2/4.0f;
 			if ((fwd2x > rht2y) && (fwd2x > up2z)) { // orientation[O_FWD].x is the largest diagonal term
-				if (fwd2x< eps_f) {	x = 0;} else {			x = (float) Math.sqrt(fwd2x);y = fwd2y/x;z = fwd2z/x;} 
+				if (fwd2x< EPS_F) {	x = 0;} else {			x = (float) Math.sqrt(fwd2x);y = fwd2y/x;z = fwd2z/x;} 
 			} else if (rht2y > up2z) { 		// orientation[O_RHT].y is the largest diagonal term
-				if (rht2y< eps_f) {	y = 0;} else {			y = (float) Math.sqrt(rht2y);x = fwd2y/y;z = rht2z/y;}
+				if (rht2y< EPS_F) {	y = 0;} else {			y = (float) Math.sqrt(rht2y);x = fwd2y/y;z = rht2z/y;}
 			} else { // orientation[O_UP].z is the largest diagonal term so base result on this
-				if (up2z< eps_f) {	z = 0;} else {			z = (float) Math.sqrt(up2z);	x = fwd2z/z;y = rht2z/z;}
+				if (up2z< EPS_F) {	z = 0;} else {			z = (float) Math.sqrt(up2z);	x = fwd2z/z;y = rht2z/z;}
 			}
 			return new float[]{angle,x,y,z}; // return 180 deg rotation
 		}
 		//no singularities - handle normally
 		myVectorf tmp = new myVectorf(rzuy, uxfz, fyrx);
 		s = tmp.magn;
-		if (s < eps_f){ s=1; }
+		if (s < EPS_F){ s=1; }
 		tmp._scale(s);//changes mag to s
 			// prevent divide by zero, should not happen if matrix is orthogonal -- should be caught by singularity test above
 		angle = (float) -Math.acos(( orientation[O_FWD].x + orientation[O_RHT].y + orientation[O_UP].z - 1)/2.0);
@@ -312,7 +312,7 @@ public class MyMathUtils {
         if (blex > 0) {
             val = val.shiftRight(blex);
             double res = Math.log(val.doubleValue());
-            return res + blex * log2;
+            return res + blex * LOG_2;
         } else {        	return Math.log(val.doubleValue());        }
     }
 
@@ -328,7 +328,7 @@ public class MyMathUtils {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int digits = val.precision() - val.scale(); 
         if (digits < MAX_DIGITS_10 && digits > -MAX_DIGITS_10) {return Math.log(val.doubleValue());}
-        else {            return logBigInteger(val.unscaledValue()) - val.scale() * log10;}
+        else {            return logBigInteger(val.unscaledValue()) - val.scale() * LOG_10;}
     }
 
     /**
@@ -347,8 +347,8 @@ public class MyMathUtils {
         boolean neg = false;
         if (exponent < 0) {            neg = true;            exponent = -exponent;        }
         double b2 = bc, c = exponent - bc;
-        int t = (int) Math.ceil(c / log10);
-        c = t * log10;
+        int t = (int) Math.ceil(c / LOG_10);
+        c = t * LOG_10;
         b2 = exponent - c;
         if (neg) {          b2 = -b2;         t = -t;   }
         return new BigDecimal(Math.exp(b2), MathContext.DECIMAL64).movePointRight(t);
