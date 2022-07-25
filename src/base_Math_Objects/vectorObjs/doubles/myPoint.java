@@ -384,46 +384,6 @@ public class myPoint {
 		double x=V._dot(I0), y=V._dot(J0);  
 		return myPoint._add(this,x,myVector._sub(I1,I0),y,myVector._sub(J1,J0)); 
 	} 	
-
-
-	
-//	/**
-//	 * render this point as a black sphere in 3d
-//	 * @param pa : render interface capable of drawing this point
-//	 * @param r : radius of resultant sphere
-//	 */
-//	public void showMeSphere(IRenderInterface pa, float r) {
-//		pa.pushMatrix();	pa.pushStyle();
-//		pa.setFill(new int[] {0,0,0},255);
-//		pa.setStroke(new int[] {0,0,0},255);
-//		pa.translate(x,y,z); 
-//		pa.setSphereDetail(5);
-//		pa.drawSphere(r);
-//		pa.popStyle();		pa.popMatrix();	
-//	}//
-//	
-//	/**
-//	 * render this point as either a sphere in 3d or an ellipse in 2d
-//	 * @param pa : render interface capable of drawing this point
-//	 * @param r : radius of result
-//	 * @param fclr : 3 element color array [0,255] of fill color; alpha forced to 255
-//	 * @param sclr : 3 element color array [0,255] of stroke color; alpha forced to 255
-//	 * @param flat : whether this should be rendered flat as an ellipse in x,y, or in 3D as a sphere
-//	 */
-//	public void showMe(IRenderInterface pa, double r,int[] fclr, int[] sclr, boolean flat) {//TODO make flat circles for points if flat
-//		pa.pushMatrix();	pa.pushStyle();
-//		pa.setFill(fclr,255); 
-//		pa.setStroke(sclr,255);
-//		if(!flat){
-//			pa.translate(x,y,z); 
-//			pa.setSphereDetail(5);
-//			pa.drawSphere((float)r);
-//		} else {
-//			pa.translate(x,y,0); 
-//			pa.drawEllipse(new float[] {0,0,(float) r,(float) r});					
-//		}
-//		pa.popStyle();		pa.popMatrix();	
-//	}//showMe
 	
 	public boolean clickIn(myPoint p, double eps) { return(_dist(p) < eps);}
 	/**

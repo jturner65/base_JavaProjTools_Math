@@ -98,8 +98,7 @@ public class myVectorf extends myPointf{
 	
 	public float _dot(myVectorf b){return ((this.x * b.x) + (this.y * b.y) + (this.z * b.z));}
 	public static float _dot(myVectorf a, myVectorf b){		return a._dot(b);}
-	
-	
+		
 	public static myVectorf _elemMult(myVectorf a, myVectorf b){return new myVectorf(a.x*b.x, a.y*b.y, a.z*b.z);}
 	public static myVectorf _elemDiv(myVectorf a, myVectorf b){return new myVectorf(a.x/b.x, a.y/b.y, a.z/b.z);}
 	
@@ -216,7 +215,6 @@ public class myVectorf extends myPointf{
 		if(sign<0){    angle=-angle;}	
 		return angle;
 	}
-
 
 	/**
 	 * returns if this vector is equal to passed vector
