@@ -452,27 +452,186 @@ public class MyMathUtils {
      * return min value of any comparable type
      */
     public static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
-   
+    
 	/**
-	 * 2d range checking of point
-	 * @param x
-	 * @param y
-	 * @param minX
-	 * @param minY
-	 * @param maxX
-	 * @param maxY
-	 * @return
+	 * Range checking of value, as double
+	 * @param x x value to check
+	 * @param min minimum x value (inclusive)
+	 * @param max maximum x value (inclusive)
+	 * @return if value is in specified range
 	 */
-	public synchronized static boolean ptInRange(double x, double y, double minX, double minY, double maxX, double maxY) {return ((x > minX)&&(x <= maxX)&&(y > minY)&&(y <= maxY)); }	
+    public synchronized static boolean inRange(double x, double min, double max) {return (x >= min)&&(x <= max); }	
+    
+	/**
+	 * Range checking of value, as floats
+	 * @param x x value to check
+	 * @param min minimum x value (inclusive)
+	 * @param max maximum x value (inclusive)
+	 * @return if value is in specified range
+	 */
+    public synchronized static boolean inRange(float x, float min, float max) {return (x >= min)&&(x <= max); }	
+    
+	/**
+	 * Range checking of value, as integers
+	 * @param x x value to check
+	 * @param min minimum x value (inclusive)
+	 * @param max maximum x value (inclusive)
+	 * @return if value is in specified range
+	 */
+    public synchronized static boolean inRange(int x, int min, int max) {return (x >= min)&&(x <= max); }	
+    
+	/**
+	 * Range checking of value, as longs
+	 * @param x x value to check
+	 * @param min minimum x value (inclusive)
+	 * @param max maximum x value (inclusive)
+	 * @return if value is in specified range
+	 */
+    public synchronized static boolean inRange(long x, long min, long max) {return (x >= min)&&(x <= max); }	
+    
+	/**
+	 * Range checking of value of any types that extend Comparable interface
+	 * @param x x value to check
+	 * @param min minimum x value (inclusive)
+	 * @param max maximum x value (inclusive)
+	 * @return if value is in specified range
+	 */
+    public synchronized static <T extends Comparable<T>> boolean inRange(T x, T min, T max) {return (x.compareTo(min) >=0) && (x.compareTo(max) <= 0); }	
+       
+	/**
+	 * 2d range checking of point, represented as doubles
+	 * @param x x value to check
+	 * @param y y value to check
+	 * @param minX minimum x value (inclusive)
+	 * @param minY minimum y value (inclusive)
+	 * @param maxX maximum x value (inclusive)
+	 * @param maxY maximum y value (inclusive)
+	 * @return if both values are in specified range
+	 */
+    public synchronized static boolean ptInRange(double x, double y, double minX, double minY, double maxX, double maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    
+	/**
+	 * 2d range checking of point, represented as floats
+	 * @param x x value to check
+	 * @param y y value to check
+	 * @param minX minimum x value (inclusive)
+	 * @param minY minimum y value (inclusive)
+	 * @param maxX maximum x value (inclusive)
+	 * @param maxY maximum y value (inclusive)
+	 * @return if both values are in specified range
+	 */
+    public synchronized static boolean ptInRange(float x, float y, float minX, float minY, float maxX, float maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    
+	/**
+	 * 2d range checking of point, represented as integers
+	 * @param x x value to check
+	 * @param y y value to check
+	 * @param minX minimum x value (inclusive)
+	 * @param minY minimum y value (inclusive)
+	 * @param maxX maximum x value (inclusive)
+	 * @param maxY maximum y value (inclusive)
+	 * @return if both values are in specified range
+	 */
+    public synchronized static boolean ptInRange(int x, int y, int minX, int minY, int maxX, int maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    
+	/**
+	 * 2d range checking of point, represented as longs
+	 * @param x x value to check
+	 * @param y y value to check
+	 * @param minX minimum x value (inclusive)
+	 * @param minY minimum y value (inclusive)
+	 * @param maxX maximum x value (inclusive)
+	 * @param maxY maximum y value (inclusive)
+	 * @return if both values are in specified range
+	 */
+    public synchronized static boolean ptInRange(long x, long y, long minX, long minY, long maxX, long maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    
+	/**
+	 * 2d range checking of points of any types that extend Comparable interface
+	 * @param x x value to check
+	 * @param y y value to check
+	 * @param minX minimum x value (inclusive)
+	 * @param minY minimum y value (inclusive)
+	 * @param maxX maximum x value (inclusive)
+	 * @param maxY maximum y value (inclusive)
+	 * @return if both values are in specified range
+	 */
+    public synchronized static <T extends Comparable<T>> boolean ptInRange(T x, T y, T minX, T minY, T maxX, T maxY) {
+    	return ((x.compareTo(minX) >=0) && (x.compareTo(maxX) <= 0) && (y.compareTo(minY) >=0) && (y.compareTo(maxY) <= 0) );
+    }	
 	
 	/**
-	 * n-dim range checking of values
+	 * n-dim range checking of array of values of doubles.
 	 * @param vals array of vals to check
-	 * @param min array of min bounds
-	 * @param max array of max bounds
-	 * @return whether entire value is within bounds
+	 * @param min array of min bounds (inclusive)
+	 * @param max array of max bounds (inclusive)
+	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static <T extends Comparable<T>> boolean ptInRange(T[] vals, T[] mins, T[] maxs) {
+	public synchronized static boolean valuesInRange(double[] vals, double[] mins, double[] maxs) {
+		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
+		int len = vals.length;
+		for(int i=0;i<len;++i) {
+			if((vals[i] <mins[i]) || (vals[i] > maxs[i])){	return false;}		
+		}		
+		return true;
+	}
+	
+	/**
+	 * n-dim range checking of array of values of floats.
+	 * @param vals array of vals to check
+	 * @param min array of min bounds (inclusive)
+	 * @param max array of max bounds (inclusive)
+	 * @return whether entire value array is within bounds
+	 */
+	public synchronized static boolean valuesInRange(float[] vals, float[] mins, float[] maxs) {
+		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
+		int len = vals.length;
+		for(int i=0;i<len;++i) {
+			if((vals[i] <mins[i]) || (vals[i] > maxs[i])){	return false;}		
+		}		
+		return true;
+	}
+	
+	/**
+	 * n-dim range checking of array of values of integers.
+	 * @param vals array of vals to check
+	 * @param min array of min bounds (inclusive)
+	 * @param max array of max bounds (inclusive)
+	 * @return whether entire value array is within bounds
+	 */
+	public synchronized static boolean valuesInRange(int[] vals, int[] mins, int[] maxs) {
+		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
+		int len = vals.length;
+		for(int i=0;i<len;++i) {
+			if((vals[i] <mins[i]) || (vals[i] > maxs[i])){	return false;}		
+		}		
+		return true;
+	}
+	
+	/**
+	 * n-dim range checking of array of values of longs.
+	 * @param vals array of vals to check
+	 * @param min array of min bounds (inclusive)
+	 * @param max array of max bounds (inclusive)
+	 * @return whether entire value array is within bounds
+	 */
+	public synchronized static boolean valuesInRange(long[] vals, long[] mins, long[] maxs) {
+		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
+		int len = vals.length;
+		for(int i=0;i<len;++i) {
+			if((vals[i] < mins[i]) || (vals[i] > maxs[i])){	return false;}		
+		}		
+		return true;
+	}
+	
+	/**
+	 * n-dim range checking of values of types that extend Comparable interface
+	 * @param vals array of vals to check
+	 * @param min array of min bounds (inclusive)
+	 * @param max array of max bounds (inclusive)
+	 * @return whether entire value array is within bounds
+	 */
+	public synchronized static <T extends Comparable<T>> boolean valuesInRange(T[] vals, T[] mins, T[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
