@@ -120,7 +120,7 @@ public class MyMathUtils {
 	 * @param O_UP idx of up orientation
 	 * @return axis-angle representation of orientation
 	 */
-	public static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
+	public synchronized static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
 		float rt2 = .5f*SQRT_2_F;
 		float angle,x=rt2,y=rt2,z=rt2,s;
 		float fyrx = -orientation[O_FWD].y+orientation[O_RHT].x,
@@ -168,11 +168,11 @@ public class MyMathUtils {
 	 * @param A, B, C verts of triangle
 	 * @return
 	 */
-	public myVector normToPlane(myPoint A, myPoint B, myPoint C) {
+	public synchronized myVector normToPlane(myPoint A, myPoint B, myPoint C) {
 		return myVector._cross(new myVector(A,B),new myVector(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 
-	public myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
+	public synchronized myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
 		return myVectorf._cross(new myVectorf(A,B),new myVectorf(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 
@@ -181,7 +181,7 @@ public class MyMathUtils {
 	 * @param M n x n matrix - don't over do it
 	 * @return
 	 */
-	public static double detMat(float[][] M){ 
+	public synchronized static double detMat(float[][] M){ 
 		double sum=0, s;
 		if(M.length==1){	return(M[0][0]); }
 		for(int i=0;i < M.length;i++){ 														
@@ -204,7 +204,7 @@ public class MyMathUtils {
 	 * @param M n x n matrix - don't over do it
 	 * @return
 	 */
-	public static double detMat(double[][] M){ 
+	public synchronized static double detMat(double[][] M){ 
 		double sum=0, s;
 		if(M.length==1){	return(M[0][0]); }
 		for(int i=0;i < M.length;i++){ 														
@@ -240,7 +240,7 @@ public class MyMathUtils {
      * @param x
      * @return
      */
-    public static double invSqrtDouble(double x){    	
+    public synchronized static double invSqrtDouble(double x){    	
         double xhalf = x * 0.5;
         long i = Double.doubleToLongBits(x);
         i = 0x5fe6eb50c7b537a9L - (i >> 1);
@@ -254,7 +254,7 @@ public class MyMathUtils {
      * @param x
      * @return
      */
-    public static int fact(int x) {
+    public synchronized static int fact(int x) {
     	if(x < 2) {return 1;} if (x==2) {return 2;}
     	return x * fact(x-1);
     }
@@ -265,12 +265,12 @@ public class MyMathUtils {
      * @param k bottom - size of choice
      * @return
      */
-    public static long choose(long n, long k) {		//entry point
+    public synchronized static long choose(long n, long k) {		//entry point
     	if(k>n) {return 0;} if (k==n) {return 1;}
     	if(n-k < k) {		return  _choose(n,n-k);   	}
     	return _choose(n,k);
     }
-    private static long _choose(long n, long k) {		//multiplicative formulation
+    private synchronized static long _choose(long n, long k) {		//multiplicative formulation
     	long res = 1;
     	for(int i=1;i<=k;++i) {    		res *= (n+1-i);res /=i;    	}
     	return res;
@@ -282,12 +282,12 @@ public class MyMathUtils {
      * @param k bottom - size of choice
      * @return
      */
-    public static BigInteger choose_BigInt(long n, long k) {		//entry point
+    public synchronized static BigInteger choose_BigInt(long n, long k) {		//entry point
     	if(k>n) {return BigInteger.ZERO;} if (k==n) {return BigInteger.ONE;}
     	if(n-k < k) {		return  _choose_BigInt(n,n-k);   	}
     	return _choose_BigInt(n,k);
     }
-    private static BigInteger _choose_BigInt(long n, long k) {		//multiplicative formulation
+    private synchronized static BigInteger _choose_BigInt(long n, long k) {		//multiplicative formulation
     	BigInteger res = BigInteger.ONE;
     	for(int i=1;i<=k;++i) {    
     		res = res.multiply(BigInteger.valueOf(n+1-i));
@@ -306,7 +306,7 @@ public class MyMathUtils {
      * @param val Argument
      * @return Natural logarithm, as in Math.log()
      */
-    public static double logBigInteger(BigInteger val) {
+    public synchronized static double logBigInteger(BigInteger val) {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int blex = val.bitLength() - MAX_DIGITS_2; // any value in 60..1023 works ok here
         if (blex > 0) {
@@ -324,7 +324,7 @@ public class MyMathUtils {
      * @param val Argument
      * @return Natural logarithm, as in <tt>Math.log()</tt>
      */
-    public static double logBigDecimal(BigDecimal val) {
+    public synchronized static double logBigDecimal(BigDecimal val) {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int digits = val.precision() - val.scale(); 
         if (digits < MAX_DIGITS_10 && digits > -MAX_DIGITS_10) {return Math.log(val.doubleValue());}
@@ -339,7 +339,7 @@ public class MyMathUtils {
      * @param exponent Any finite value (infinite or Nan throws IllegalArgumentException)
      * @return The value of e (base of the natural logarithms) raised to the given exponent, as in Math.exp()
      */
-    public static BigDecimal expBig(double exponent) {
+    public synchronized static BigDecimal expBig(double exponent) {
         if (!Double.isFinite(exponent)) {throw new IllegalArgumentException("Infinite not accepted: " + exponent);}
         // e^b = e^(b2+c) = e^b2 2^t with e^c = 2^t 
         double bc = MAX_DIGITS_EXP;
@@ -364,7 +364,7 @@ public class MyMathUtils {
      * @param b Exponent. Should be finite (and non-negative if base is zero)
      * @return Returns the value of the first argument raised to the power of the second argument.
      */
-    public static BigDecimal powBig(double a, double b) {
+    public synchronized static BigDecimal powBig(double a, double b) {
         if (!(Double.isFinite(a) && Double.isFinite(b)))
             throw new IllegalArgumentException(Double.isFinite(b) ? "base not finite: a=" + a : "exponent not finite: b=" + b);
         if (b == 0) {  return BigDecimal.ONE;}
@@ -385,7 +385,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public static myVectorf[] getVecFrameNonNorm(myVectorf vec, myVectorf norm) {
+	public synchronized static myVectorf[] getVecFrameNonNorm(myVectorf vec, myVectorf norm) {
 		myVectorf[] result = new myVectorf[3];//(2, myVector(0, 0, 0));
 		result[0] = myVectorf._mult(norm,(norm._dot(vec)));//norm dir
 		result[1] = myVectorf._sub(vec, result[0]);		//tan dir
@@ -399,7 +399,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public static myVectorf[] getVecFrameNormalized(myVectorf vec, myVectorf norm) {
+	public synchronized static myVectorf[] getVecFrameNormalized(myVectorf vec, myVectorf norm) {
 		myVectorf[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVectorf[nn_result.length];
 		for(int i=0;i<result.length;++i) {
 			result[i]=nn_result[i]._normalized();
@@ -413,7 +413,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public static myVector[] getVecFrameNonNorm(myVector vec, myVector norm) {
+	public synchronized static myVector[] getVecFrameNonNorm(myVector vec, myVector norm) {
 		myVector[] result = new myVector[3];//(2, myVector(0, 0, 0));
 		result[0] = myVector._mult(norm,(norm._dot(vec)));//norm dir
 		result[1] = myVector._sub(vec, result[0]);		//tan dir
@@ -427,7 +427,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public static myVector[] getVecFrameNormalized(myVector vec, myVector norm) {
+	public synchronized static myVector[] getVecFrameNormalized(myVector vec, myVector norm) {
 		myVector[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVector[nn_result.length];
 		for(int i=0;i<result.length;++i) {
 			result[i]=nn_result[i]._normalized();
@@ -438,20 +438,20 @@ public class MyMathUtils {
     /**
      * return max value of any comparable type
      */
-    public static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
+    public synchronized static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
     /**
      * return min value of any comparable type
      */
-    public static <T extends Comparable<T>> T min(T x, T y) {      return (x.compareTo(y) < 0) ? x : y;    }
+    public synchronized static <T extends Comparable<T>> T min(T x, T y) {      return (x.compareTo(y) < 0) ? x : y;    }
    
     /**
      * return max value of any comparable type of 3 values
      */
-    public static <T extends Comparable<T>> T max(T x, T y, T z) {    	return max(max(x,y),z);    }
+    public synchronized static <T extends Comparable<T>> T max(T x, T y, T z) {    	return max(max(x,y),z);    }
     /**
      * return min value of any comparable type
      */
-    public static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
+    public synchronized static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
     
 	/**
 	 * Range checking of value, as double
