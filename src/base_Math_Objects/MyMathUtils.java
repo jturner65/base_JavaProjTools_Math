@@ -15,6 +15,9 @@ import base_Math_Objects.vectorObjs.floats.myVectorf;
  *
  */
 public class MyMathUtils {
+	/**
+	 * Useful double constants
+	 */
 	public static final double 
 		PI = Math.PI,
 		HALF_PI = .5*PI,
@@ -25,10 +28,14 @@ public class MyMathUtils {
 		INV_SQRT_2 = .5 * SQRT_2,
 		SQRT_3 = Math.sqrt(3.0),
 		INV_SQRT_3 = 1.0/SQRT_3,
+		DEG_TO_RAD = PI/180.0,
 		EPS = 1e-8,
 		LOG_2 = Math.log(2.0),
 		LOG_10 = Math.log(10.0);
-
+	
+	/**
+	 * Useful float constants
+	 */
 	public static final float 
 		PI_F = (float)PI,
 		HALF_PI_F = (float) HALF_PI,
@@ -39,6 +46,7 @@ public class MyMathUtils {
 		INV_SQRT_2_F = (float) INV_SQRT_2,
 		SQRT_3_F = (float) SQRT_3,
 		INV_SQRT_3_F = (float) INV_SQRT_3,
+		DEG_TO_RAD_F = (float)DEG_TO_RAD,
 		EPS_F = (float) EPS,
 		LOG_2_F = (float)LOG_2,
 		LOG_10_F = (float)LOG_10;
