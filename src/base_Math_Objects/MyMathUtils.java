@@ -3,6 +3,7 @@ package base_Math_Objects;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.Arrays;
 
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.floats.myPointf;
@@ -258,13 +259,74 @@ public class MyMathUtils {
     }
     
     /**
-     * recursive factorial formulation
+     * iterative factorial formulation
      * @param x
      * @return
      */
-    public synchronized static int fact(int x) {
-    	if(x < 2) {return 1;} if (x==2) {return 2;}
-    	return x * fact(x-1);
+    public synchronized static long fact(int x) {
+    	long ttl=1;
+    	for(int i=x; i>1;--i) { ttl*=i;}
+    	return ttl;
+    }
+     
+	/**
+	 * Use column math to calculate x * values in ans ara
+	 * @param x
+	 * @param ans
+	 * @param MSigDig
+	 * @return
+	 */
+	private static int calcMult(int x, int[] ans, int MSigDig) {
+		int carry = 0, prod;
+		for(int i=0; i<MSigDig; ++i) {
+			prod = ans[i] * x + carry;
+			ans[i] = prod % 10;
+			carry = prod/10;
+		}
+		//propagate carry
+	    while (carry>0) { 
+	        ans[MSigDig] = carry%10; 
+	        carry = carry/10; 
+	        MSigDig++; 
+	    } 
+	    return MSigDig; 
+	}//calcMult
+    
+    /**
+     * Find factorial of huge number, putting result in an array.
+     * @param x
+     * @return x! (factorial of x) as array of digits base 10
+     */
+    public synchronized static int[] bigFact(int x) {
+    	if (x < 2) {return new int[] {1};}
+    	//find # of digits by finding 1 + ceil(log10(x!))  
+    	//== log10(x) + log10(x-1) ... + log10(2)
+    	double sum = 0.0;
+    	for(int i=2;i<=x;++i) {sum += Math.log10(i); 	}
+    	int numDigits = (int) (Math.ceil(sum)); 
+    	int[] res = new int[numDigits];
+    	res[0] = 1;
+    	int MSigDig = 1; 
+    	for (int i=2; i<=x;++i) {
+    		MSigDig = calcMult(i, res, MSigDig);
+    	}   
+    	//now reverse array
+    	int lastIdx = numDigits-1;
+    	for(int i=lastIdx; i>=numDigits/2.0f; --i) {
+    		int tmp = res[i];
+    		res[i] = res[lastIdx-i];
+    		res[lastIdx-i] = tmp;
+    	}
+    	return res;
+    }//bigFact
+    
+    /**
+     * Return a string representation of an array of digits of a large number
+     * @param vals
+     * @return
+     */
+    public synchronized static String intAraToString(int[] vals) {
+    	return Arrays.toString(vals).replaceAll("\\[|\\]|,|\\s", "");    	
     }
     
     /**
@@ -299,8 +361,6 @@ public class MyMathUtils {
     	BigInteger res = BigInteger.ONE;
     	for(int i=1;i<=k;++i) {    
     		res = res.multiply(BigInteger.valueOf(n+1-i));
-    		//res *= (n+1-i);
-    		//res /=i;    	
     		res = res.divide(BigInteger.valueOf(i));
     	}
     	return res;
