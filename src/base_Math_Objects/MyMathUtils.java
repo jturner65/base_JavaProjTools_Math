@@ -3,7 +3,6 @@ package base_Math_Objects;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.util.Arrays;
 
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.floats.myPointf;
@@ -21,7 +20,9 @@ public class MyMathUtils {
 	 */
 	public static final double 
 		PI = Math.PI,
+		QUARTER_PI = .25*PI,
 		HALF_PI = .5*PI,
+		THIRD_PI = PI/3.0,
 		TWO_PI = 2.0*PI,
 		THREE_QTR_PI = .75 * PI,
 		FIFTH_PI = .2 * PI,
@@ -39,8 +40,10 @@ public class MyMathUtils {
 	 */
 	public static final float 
 		PI_F = (float)PI,
+		QUARTER_PI_F = (float)QUARTER_PI,
 		HALF_PI_F = (float) HALF_PI,
 		TWO_PI_F = (float) TWO_PI,
+		THIRD_PI_F = (float) THIRD_PI,
 		THREE_QTR_PI_F = (float) THREE_QTR_PI,
 		FIFTH_PI_F = (float) FIFTH_PI,
 		SQRT_2_F = (float) SQRT_2,
@@ -276,16 +279,17 @@ public class MyMathUtils {
 	 * @param MSigDig
 	 * @return
 	 */
-	private static int calcMult(int x, int[] ans, int MSigDig) {
-		int carry = 0, prod;
-		for(int i=0; i<MSigDig; ++i) {
+	private static int calcMult(int x, byte[] ans, int MSigDig) {
+		long carry = 0, prod;
+		
+		for(int i=0; i<MSigDig; ++i) {			
 			prod = ans[i] * x + carry;
-			ans[i] = prod % 10;
+			ans[i] = (byte) (prod % 10);
 			carry = prod/10;
 		}
 		//propagate carry
 	    while (carry>0) { 
-	        ans[MSigDig] = carry%10; 
+	        ans[MSigDig] = (byte) (carry%10); 
 	        carry = carry/10; 
 	        MSigDig++; 
 	    } 
@@ -297,14 +301,14 @@ public class MyMathUtils {
      * @param x
      * @return x! (factorial of x) as array of digits base 10
      */
-    public synchronized static int[] bigFact(int x) {
-    	if (x < 2) {return new int[] {1};}
+    public synchronized static byte[] bigFact(int x) {
+    	if (x < 2) {return new byte[] {1};}
     	//find # of digits by finding 1 + ceil(log10(x!))  
     	//== log10(x) + log10(x-1) ... + log10(2)
     	double sum = 0.0;
     	for(int i=2;i<=x;++i) {sum += Math.log10(i); 	}
     	int numDigits = (int) (Math.ceil(sum)); 
-    	int[] res = new int[numDigits];
+    	byte[] res = new byte[numDigits];
     	res[0] = 1;
     	int MSigDig = 1; 
     	for (int i=2; i<=x;++i) {
@@ -313,21 +317,12 @@ public class MyMathUtils {
     	//now reverse array
     	int lastIdx = numDigits-1;
     	for(int i=lastIdx; i>=numDigits/2.0f; --i) {
-    		int tmp = res[i];
+    		byte tmp = res[i];
     		res[i] = res[lastIdx-i];
     		res[lastIdx-i] = tmp;
     	}
     	return res;
     }//bigFact
-    
-    /**
-     * Return a string representation of an array of digits of a large number
-     * @param vals
-     * @return
-     */
-    public synchronized static String intAraToString(int[] vals) {
-    	return Arrays.toString(vals).replaceAll("\\[|\\]|,|\\s", "");    	
-    }
     
     /**
      * n choose k == n!/(k! * (n-k)!) - ways to choose k items from a set of size n
