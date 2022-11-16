@@ -17,8 +17,8 @@ public class myVectorf extends myPointf{
 	
 	public myVectorf(float _x, float _y, float _z){super(_x,_y,_z); this._mag();}         //constructor 3 args  
 	public myVectorf(double _x, double _y, double _z){this((float)_x,(float)_y,(float)_z); }         //constructor with doubles
-	public myVectorf(myVectorf p){ this(p.x, p.y, p.z); }                                                                                                           	//constructor 1 arg  
-	public myVectorf(myVector p){ this((float)p.x, (float)p.y, (float)p.z); }                                                                                                           	//constructor 1 arg  
+	public myVectorf(myVectorf p){super(p.x, p.y, p.z); this.magn = p.magn;this.sqMagn = p.sqMagn;}                                                                                                           	//constructor 1 arg  
+	public myVectorf(myVector p){super((float)p.x, (float)p.y, (float)p.z); this.magn = (float) p.magn;this.sqMagn = (float) p.sqMagn;}                                                                                                           	//constructor 1 arg  
 	public myVectorf(){ }//this(0,0,0);}                                                                                                                               //constructor 0 args
 	public myVectorf(myPointf a, myPointf b){this(b.x-a.x,b.y-a.y,b.z-a.z);}			//vector from a->b
 	public myVectorf(myPoint a, myPointf b){this(b.x-a.x,b.y-a.y,b.z-a.z);}			//vector from a->b
@@ -38,7 +38,7 @@ public class myVectorf extends myPointf{
 	public void clear() {super.clear();this.magn = 0; this.sqMagn=0;}
 	public void set(float _x, float _y, float _z){ super.set(_x, _y, _z); this._mag(); }                                               //set 3 args 
 	public void set(double _x, double _y, double _z){ this.set((float)_x,(float)_y,(float)_z); }                                               //set 3 args 
-	public void set(myVectorf p){ this.x = p.x; this.y = p.y; this.z = p.z;  this._mag();}                                                                   //set 1 args
+	public void set(myVectorf p){ this.x = p.x; this.y = p.y; this.z = p.z; this.magn=p.magn; this.sqMagn=p.sqMagn; }                                                                   //set 1 args
 	public void set(myPointf p, myPointf q){ this.x = q.x - p.x; this.y = q.y - p.y; this.z = q.z - p.z;  this._mag();}                                                                   //set 1 args
 	public void set(float _x, float _y, float _z, float _sqMagn){ super.set(_x, _y, _z); this.sqMagn = _sqMagn; }                                                                     //set 3 args 
 
@@ -67,9 +67,12 @@ public class myVectorf extends myPointf{
 	public static myVectorf _sub(myPointf p, myPointf q){ return new myVectorf(p.x - q.x, p.y - q.y, p.z - q.z);}					             //2 pts or 2 vectors or any combo
 	public static void _sub(myVectorf p, myVectorf q, myVectorf r){ myVectorf result = new myVectorf(p.x - q.x, p.y - q.y, p.z - q.z); r.set(result);}       //2 vec src, 1 vec dest  
 	
-	public float _mag(){ this.magn = (float)Math.sqrt(this._SqMag()); return magn; }  
+	public float _mag(){ this.magn = (float)Math.sqrt(this._SqMag()); return this.magn; }  
 	public float _SqMag(){ this.sqMagn =  ((this.x*this.x) + (this.y*this.y) + (this.z*this.z)); return this.sqMagn; }  							//squared magnitude
-	
+	/**
+	 * Sets length of vector
+	 * @param _newMag
+	 */
 	public void _scale(float _newMag){this._normalize()._mult(_newMag);}
 	
 	public myVectorf _normalize(){this._mag();if(magn==0){return this;}this.x /= magn; this.y /= magn; this.z /= magn; _mag();return this;}

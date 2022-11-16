@@ -77,19 +77,19 @@ public class MyMathUtils {
 		AB._normalize();
 		double udv = AB._dot(AP); //project AP onto line		
 		double resSq = AP.sqMagn - (udv*udv);		//AB mag is 1 so can be ignored
-		if(resSq < 0) {return 0;}
+		if(resSq <= 0) {return 0;}
 		return Math.sqrt(resSq); 
-	};		//MAY RETURN NAN IF point P is on line
+	}
 		
 	public synchronized static float distToLine(myPointf P, myPointf A, myPointf B) {
 		myVectorf AB = new myVectorf(A,B),AP = new myVectorf(A,P);
 		AB._normalize();
 		double udv = AB._dot(AP); //project AP onto line		
 		double resSq = AP.sqMagn - (udv*udv);		//AB mag is 1 so can be ignored
-		if(resSq < 0) {return 0;}
+		if(resSq <= 0) {return 0;}
 		return (float) Math.sqrt(resSq); 
-	};		//MAY RETURN NAN IF point P is on line
-		
+	}
+	
 	/**
 	 * return the projection point of P on line determined by AB between A and B
 	 * @param P point to investigate
@@ -183,56 +183,15 @@ public class MyMathUtils {
 	public synchronized myVector normToPlane(myPoint A, myPoint B, myPoint C) {
 		return myVector._cross(new myVector(A,B),new myVector(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
-
+	
+	/**
+	 * Calculate normal to planed described by triangle ABC, non-normalized (proportional to area)
+	 * @param A, B, C verts of triangle
+	 * @return
+	 */
 	public synchronized myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
 		return myVectorf._cross(new myVectorf(A,B),new myVectorf(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
-
-	/**
-	 * calculates the determinant of a Matrix
-	 * @param M n x n matrix - don't over do it
-	 * @return
-	 */
-	public synchronized static double detMat(float[][] M){ 
-		double sum=0, s;
-		if(M.length==1){	return(M[0][0]); }
-		for(int i=0;i < M.length;i++){ 														
-			float[][] minor= new float[M.length-1][M.length-1];
-			for(int b=0;b<M.length;++b){
-				if(b==i) {continue;}
-				int bIdx = (b<i)? b : b-1;
-				for(int a=1;a<M.length;++a){
-					minor[a-1][bIdx] = M[a][b];
-				}
-			}	
-			s = (i%2==0) ? 1.0f : -1.0f;
-			sum += s * M[0][i] * (detMat(minor)); 										
-		}
-		return(sum); //returns determinant value. once stack is finished, returns final determinant.
-	}//detMat
-
-	/**
-	 * calculates the determinant of a Matrix
-	 * @param M n x n matrix - don't over do it
-	 * @return
-	 */
-	public synchronized static double detMat(double[][] M){ 
-		double sum=0, s;
-		if(M.length==1){	return(M[0][0]); }
-		for(int i=0;i < M.length;i++){ 														
-			double[][] minor= new double[M.length-1][M.length-1];
-			for(int b=0;b<M.length;++b){
-				if(b==i) {continue;}
-				int bIdx = (b<i)? b : b-1;
-				for(int a=1;a<M.length;++a){
-					minor[a-1][bIdx] = M[a][b];
-				}
-			}	
-			s = (i%2==0) ? 1.0f : -1.0f;
-			sum += s * M[0][i] * (detMat(minor)); 										
-		}
-		return(sum); //returns determinant value. once stack is finished, returns final determinant.
-	}//detMat	
 	
 	/**
 	 * quake inv sqrt calc - about 30% faster than 
@@ -498,7 +457,158 @@ public class MyMathUtils {
 		return result;
 	}
 	
-    /**
+	/**
+	 * Return max of 2 ints
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static int max(int x, int y) {      return (x>y) ? x : y;    }
+	/**
+	 * Return min of 2 ints
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static int min(int x, int y) {      return (x<y) ? x : y;    }
+	
+	/**
+	 * Return max of 2 longs
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static long max(long x, long y) {      return (x>y) ? x : y;    }
+	/**
+	 * Return min of 2 longs
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static long min(long x, long y) {      return (x<y) ? x : y;    }
+	
+	
+	/**
+	 * Return max of 2 floats
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static float max(float x, float y) {      return (x>y) ? x : y;    }
+	/**
+	 * Return min of 2 floats
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static float min(float x, float y) {      return (x<y) ? x : y;    }
+	
+	/**
+	 * Return max of 2 doubles
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static double max(double x, double y) {      return (x>y) ? x : y;    }
+	/**
+	 * Return min of 2 doubles
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public synchronized static double min(double x, double y) {      return (x<y) ? x : y;    }
+	
+	/**
+	 * Return max of 3 ints
+	 */
+	public synchronized static int max(int x, int y, int z) {      return max(max(x,y),z);  }
+	/**
+	 * Return min of 3 ints
+	 */
+	public synchronized static int min(int x, int y, int z) {      return min(min(x,y),z);  }
+	/**
+	 * Return max of 3 longs
+	 */
+	public synchronized static long max(long x, long y, long z) {      return max(max(x,y),z);  }
+	/**
+	 * Return min of 3 longs
+	 */
+	public synchronized static long min(long x, long y, long z) {      return min(min(x,y),z);  }
+	/**
+	 * Return max of 3 floats
+	 */
+	public synchronized static float max(float x, float y, float z) {      return max(max(x,y),z);  }
+	/**
+	 * Return min of 3 floats
+	 */
+	public synchronized static float min(float x, float y, float z) {      return min(min(x,y),z);  }	
+	/**
+	 * Return max of 3 doubles
+	 */
+	public synchronized static double max(double x, double y, double z) {      return max(max(x,y),z);  }
+	/**
+	 * Return min of 3 doubles
+	 */
+	public synchronized static double min(double x, double y, double z) {      return min(min(x,y),z);  }
+	
+	/**
+	 * Return min(idx 0) and max (idx 1) of passed array of int values
+	 * @param valAra one or more values 
+	 * @return
+	 */
+	public synchronized static int[] minAndMax(int[] valAra) {    		
+		int[] res = new int[] {valAra[0], valAra[0]};
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
+			if(valAra[i] > res[1]){res[1] = valAra[i];}	//max value
+		}
+		return res;
+	}
+	
+	/**
+	 * Return min(idx 0) and max (idx 1) of passed array of long values
+	 * @param valAra one or more values 
+	 * @return
+	 */
+	public synchronized static long[] minAndMax(long[] valAra) {    		
+		long[] res = new long[] {valAra[0], valAra[0]};
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
+			if(valAra[i] > res[1]){res[1] = valAra[i];}	//max value
+		}
+		return res;
+	}
+	
+	/**
+	 * Return min(idx 0) and max (idx 1) of passed array of float values
+	 * @param valAra one or more values 
+	 * @return
+	 */
+	public synchronized static float[] minAndMax(float[] valAra) {    		
+		float[] res = new float[] {valAra[0], valAra[0]};
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
+			if(valAra[i] > res[1]){res[1] = valAra[i];}	//max value
+		}
+		return res;
+	}
+	
+	/**
+	 * Return min(idx 0) and max (idx 1) of passed array of double values
+	 * @param valAra one or more values 
+	 * @return
+	 */
+	public synchronized static double[] minAndMax(double[] valAra) {    		
+		double[] res = new double[] {valAra[0], valAra[0]};
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
+			if(valAra[i] > res[1]){res[1] = valAra[i];}	//max value
+		}
+		return res;
+	}
+	
+	
+	/**
      * return max value of any comparable type
      */
     public synchronized static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
@@ -515,6 +625,7 @@ public class MyMathUtils {
      * return min value of any comparable type
      */
     public synchronized static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
+
     
 	/**
 	 * Range checking of value, as double
