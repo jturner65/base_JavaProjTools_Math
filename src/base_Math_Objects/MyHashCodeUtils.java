@@ -29,13 +29,13 @@ public final class MyHashCodeUtils {
 	private static final int fPrime = 37;
 	
 	/** booleans.  */
-	public static int hash(int aSeed, boolean aBoolean) {return firstTerm( aSeed ) + (aBoolean ? 1 : 0);}
+	public static int hash(int aSeed, boolean aBoolean) {return firstTerm(aSeed) + (aBoolean ? 1 : 0);}
 	
 	/*** chars.  */
 	public static int hash(int aSeed, char aChar) {	  return firstTerm(aSeed) + (int)aChar;}
 	
 	/** ints.  */
-	public static int hash(int aSeed , int aInt) {
+	public static int hash(int aSeed, int aInt) {
 	  /*
 	  * Implementation Note
 	  * Note that byte and short are handled by this method, through
@@ -63,7 +63,7 @@ public final class MyHashCodeUtils {
 	* If <tt>aObject</tt> is an array, then each element may be a primitive
 	* or a possibly-null object.
 	*/
-	public static int hash(int aSeed , Object aObject) {
+	public static int hash(int aSeed, Object aObject) {
 	  int result = aSeed;
 	  if (aObject == null){
 	    result = hash(result, 0);

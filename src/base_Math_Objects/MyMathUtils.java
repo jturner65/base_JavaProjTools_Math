@@ -72,7 +72,7 @@ public class MyMathUtils {
 	 * @param B
 	 * @return
 	 */
-	public synchronized static double distToLine(myPoint P, myPoint A, myPoint B) {
+	public static double distToLine(myPoint P, myPoint A, myPoint B) {
 		myVector AB = new myVector(A,B),AP = new myVector(A,P);
 		AB._normalize();
 		double udv = AB._dot(AP); //project AP onto line		
@@ -81,7 +81,7 @@ public class MyMathUtils {
 		return Math.sqrt(resSq); 
 	}
 		
-	public synchronized static float distToLine(myPointf P, myPointf A, myPointf B) {
+	public static float distToLine(myPointf P, myPointf A, myPointf B) {
 		myVectorf AB = new myVectorf(A,B),AP = new myVectorf(A,P);
 		AB._normalize();
 		double udv = AB._dot(AP); //project AP onto line		
@@ -96,11 +96,11 @@ public class MyMathUtils {
 	 * @param A,B line seg endpoints
 	 * @return 
 	 */	
-	public synchronized static myPoint projectionOnLine(myPoint P, myPoint A, myPoint B) {
+	public static myPoint projectionOnLine(myPoint P, myPoint A, myPoint B) {
 		myVector AB = new myVector(A,B), AP = new myVector(A,P);
 		return new myPoint(A,AB._dot(AP)/(AB._dot(AB)),AB);
 	}
-	public synchronized static myPointf projectionOnLine(myPointf P, myPointf A, myPointf B) {
+	public static myPointf projectionOnLine(myPointf P, myPointf A, myPointf B) {
 		myVectorf AB = new myVectorf(A,B), AP = new myVectorf(A,P);
 		return new myPointf(A,AB._dot(AP)/(AB._dot(AB)),AB);
 	}
@@ -110,13 +110,13 @@ public class MyMathUtils {
 	 * @param A,B line seg endpoints
 	 * @return
 	 */
-	public synchronized static boolean projectsBetween(myPoint P, myPoint A, myPoint B) {
+	public static boolean projectsBetween(myPoint P, myPoint A, myPoint B) {
 		myVector AP = new myVector(A,P), AB = new myVector(A,B);
 		if(AP._dot(AB) <= 0) {return false;}		//if not greater than 0 than won't project onto AB - past A away from segment
 		myVector BP = new myVector(B,P), BA = new myVector(B,A);		
 		return BP._dot(BA)>0 ; 						//if not greater than 0 than won't project onto AB - past B away from segment
 	}
-	public synchronized static boolean projectsBetween(myPointf P, myPointf A, myPointf B) {
+	public static boolean projectsBetween(myPointf P, myPointf A, myPointf B) {
 		myVectorf AP = new myVectorf(A,P), AB = new myVectorf(A,B);
 		if(AP._dot(AB) <= 0) {return false;}		//if not greater than 0 than won't project onto AB - past A away from segment
 		myVectorf BP = new myVectorf(B,P), BA = new myVectorf(B,A);		
@@ -132,7 +132,7 @@ public class MyMathUtils {
 	 * @param O_UP idx of up orientation
 	 * @return axis-angle representation of orientation
 	 */
-	public synchronized static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
+	public static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
 		float rt2 = .5f*SQRT_2_F;
 		float angle,x=rt2,y=rt2,z=rt2,s;
 		float fyrx = -orientation[O_FWD].y+orientation[O_RHT].x,
@@ -180,7 +180,7 @@ public class MyMathUtils {
 	 * @param A, B, C verts of triangle
 	 * @return
 	 */
-	public synchronized myVector normToPlane(myPoint A, myPoint B, myPoint C) {
+	public myVector normToPlane(myPoint A, myPoint B, myPoint C) {
 		return myVector._cross(new myVector(A,B),new myVector(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 	
@@ -189,31 +189,33 @@ public class MyMathUtils {
 	 * @param A, B, C verts of triangle
 	 * @return
 	 */
-	public synchronized myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
+	public myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
 		return myVectorf._cross(new myVectorf(A,B),new myVectorf(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 	
 	/**
-	 * quake inv sqrt calc - about 30% faster than 
+	 * Kahan (quake) inv sqrt calc - can be up to 30% faster than Math lib
 	 * @param x
 	 * @return
 	 */
-    public synchronized static float invSqrtFloat(float x){
+    public static float invSqrtFloat(float x){
         float xhalf = x * 0.5f;
         int i = Float.floatToIntBits(x);
+        //hex number is floating point/bitwise rep of approx sqrt(2^127)
         i = 0x5f3759df - (i >> 1);
         x = Float.intBitsToFloat(i);
         x *= (1.5f - (xhalf * x * x));   // newton iter
         return x;
     }
     /**
-     * double version of quake sqrt approx - 2x as fast as Math.sqrt
+     * double version of Kahan (quake) sqrt approx - can be up to 30% faster than Math lib
      * @param x
      * @return
      */
-    public synchronized static double invSqrtDouble(double x){    	
+    public static double invSqrtDouble(double x){    	
         double xhalf = x * 0.5;
         long i = Double.doubleToLongBits(x);
+        //hex number is double/bitwise rep of approx sqrt(2^127)
         i = 0x5fe6eb50c7b537a9L - (i >> 1);
         x = Double.longBitsToDouble(i);
         x *= (1.5 - (xhalf * x * x));   // newton iter
@@ -225,7 +227,7 @@ public class MyMathUtils {
      * @param x
      * @return
      */
-    public synchronized static long fact(int x) {
+    public static long fact(int x) {
     	long ttl=1;
     	for(int i=x; i>1;--i) { ttl*=i;}
     	return ttl;
@@ -260,7 +262,7 @@ public class MyMathUtils {
      * @param x
      * @return x! (factorial of x) as array of digits base 10
      */
-    public synchronized static byte[] bigFact(int x) {
+    public static byte[] bigFact(int x) {
     	if (x < 2) {return new byte[] {1};}
     	//find # of digits by finding 1 + ceil(log10(x!))  
     	//== log10(x) + log10(x-1) ... + log10(2)
@@ -289,12 +291,12 @@ public class MyMathUtils {
      * @param k bottom - size of choice
      * @return
      */
-    public synchronized static long choose(long n, long k) {		//entry point
+    public static long choose(long n, long k) {		//entry point
     	if(k>n) {return 0;} if (k==n) {return 1;}
     	if(n-k < k) {		return  _choose(n,n-k);   	}
     	return _choose(n,k);
     }
-    private synchronized static long _choose(long n, long k) {		//multiplicative formulation
+    private static long _choose(long n, long k) {		//multiplicative formulation
     	long res = 1;
     	for(int i=1;i<=k;++i) {    		res *= (n+1-i);res /=i;    	}
     	return res;
@@ -306,12 +308,12 @@ public class MyMathUtils {
      * @param k bottom - size of choice
      * @return
      */
-    public synchronized static BigInteger choose_BigInt(long n, long k) {		//entry point
+    public static BigInteger choose_BigInt(long n, long k) {		//entry point
     	if(k>n) {return BigInteger.ZERO;} if (k==n) {return BigInteger.ONE;}
     	if(n-k < k) {		return  _choose_BigInt(n,n-k);   	}
     	return _choose_BigInt(n,k);
     }
-    private synchronized static BigInteger _choose_BigInt(long n, long k) {		//multiplicative formulation
+    private static BigInteger _choose_BigInt(long n, long k) {		//multiplicative formulation
     	BigInteger res = BigInteger.ONE;
     	for(int i=1;i<=k;++i) {    
     		res = res.multiply(BigInteger.valueOf(n+1-i));
@@ -328,7 +330,7 @@ public class MyMathUtils {
      * @param val Argument
      * @return Natural logarithm, as in Math.log()
      */
-    public synchronized static double logBigInteger(BigInteger val) {
+    public static double logBigInteger(BigInteger val) {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int blex = val.bitLength() - MAX_DIGITS_2; // any value in 60..1023 works ok here
         if (blex > 0) {
@@ -346,7 +348,7 @@ public class MyMathUtils {
      * @param val Argument
      * @return Natural logarithm, as in <tt>Math.log()</tt>
      */
-    public synchronized static double logBigDecimal(BigDecimal val) {
+    public static double logBigDecimal(BigDecimal val) {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int digits = val.precision() - val.scale(); 
         if (digits < MAX_DIGITS_10 && digits > -MAX_DIGITS_10) {return Math.log(val.doubleValue());}
@@ -361,7 +363,7 @@ public class MyMathUtils {
      * @param exponent Any finite value (infinite or Nan throws IllegalArgumentException)
      * @return The value of e (base of the natural logarithms) raised to the given exponent, as in Math.exp()
      */
-    public synchronized static BigDecimal expBig(double exponent) {
+    public static BigDecimal expBig(double exponent) {
         if (!Double.isFinite(exponent)) {throw new IllegalArgumentException("Infinite not accepted: " + exponent);}
         // e^b = e^(b2+c) = e^b2 2^t with e^c = 2^t 
         double bc = MAX_DIGITS_EXP;
@@ -386,7 +388,7 @@ public class MyMathUtils {
      * @param b Exponent. Should be finite (and non-negative if base is zero)
      * @return Returns the value of the first argument raised to the power of the second argument.
      */
-    public synchronized static BigDecimal powBig(double a, double b) {
+    public static BigDecimal powBig(double a, double b) {
         if (!(Double.isFinite(a) && Double.isFinite(b)))
             throw new IllegalArgumentException(Double.isFinite(b) ? "base not finite: a=" + a : "exponent not finite: b=" + b);
         if (b == 0) {  return BigDecimal.ONE;}
@@ -407,7 +409,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public synchronized static myVectorf[] getVecFrameNonNorm(myVectorf vec, myVectorf norm) {
+	public static myVectorf[] getVecFrameNonNorm(myVectorf vec, myVectorf norm) {
 		myVectorf[] result = new myVectorf[3];//(2, myVector(0, 0, 0));
 		result[0] = myVectorf._mult(norm,(norm._dot(vec)));//norm dir
 		result[1] = myVectorf._sub(vec, result[0]);		//tan dir
@@ -421,7 +423,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public synchronized static myVectorf[] getVecFrameNormalized(myVectorf vec, myVectorf norm) {
+	public static myVectorf[] getVecFrameNormalized(myVectorf vec, myVectorf norm) {
 		myVectorf[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVectorf[nn_result.length];
 		for(int i=0;i<result.length;++i) {
 			result[i]=nn_result[i]._normalized();
@@ -435,7 +437,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public synchronized static myVector[] getVecFrameNonNorm(myVector vec, myVector norm) {
+	public static myVector[] getVecFrameNonNorm(myVector vec, myVector norm) {
 		myVector[] result = new myVector[3];//(2, myVector(0, 0, 0));
 		result[0] = myVector._mult(norm,(norm._dot(vec)));//norm dir
 		result[1] = myVector._sub(vec, result[0]);		//tan dir
@@ -449,7 +451,7 @@ public class MyMathUtils {
 	 * @param norm
 	 * @return
 	 */
-	public synchronized static myVector[] getVecFrameNormalized(myVector vec, myVector norm) {
+	public static myVector[] getVecFrameNormalized(myVector vec, myVector norm) {
 		myVector[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVector[nn_result.length];
 		for(int i=0;i<result.length;++i) {
 			result[i]=nn_result[i]._normalized();
@@ -463,14 +465,14 @@ public class MyMathUtils {
 	 * @param y
 	 * @return
 	 */
-	public synchronized static int max(int x, int y) {      return (x>y) ? x : y;    }
+	public static int max(int x, int y) {      return (x>y) ? x : y;    }
 	/**
 	 * Return min of 2 ints
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public synchronized static int min(int x, int y) {      return (x<y) ? x : y;    }
+	public static int min(int x, int y) {      return (x<y) ? x : y;    }
 	
 	/**
 	 * Return max of 2 longs
@@ -478,14 +480,14 @@ public class MyMathUtils {
 	 * @param y
 	 * @return
 	 */
-	public synchronized static long max(long x, long y) {      return (x>y) ? x : y;    }
+	public static long max(long x, long y) {      return (x>y) ? x : y;    }
 	/**
 	 * Return min of 2 longs
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public synchronized static long min(long x, long y) {      return (x<y) ? x : y;    }
+	public static long min(long x, long y) {      return (x<y) ? x : y;    }
 	
 	
 	/**
@@ -494,14 +496,14 @@ public class MyMathUtils {
 	 * @param y
 	 * @return
 	 */
-	public synchronized static float max(float x, float y) {      return (x>y) ? x : y;    }
+	public static float max(float x, float y) {      return (x>y) ? x : y;    }
 	/**
 	 * Return min of 2 floats
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public synchronized static float min(float x, float y) {      return (x<y) ? x : y;    }
+	public static float min(float x, float y) {      return (x<y) ? x : y;    }
 	
 	/**
 	 * Return max of 2 doubles
@@ -509,54 +511,54 @@ public class MyMathUtils {
 	 * @param y
 	 * @return
 	 */
-	public synchronized static double max(double x, double y) {      return (x>y) ? x : y;    }
+	public static double max(double x, double y) {      return (x>y) ? x : y;    }
 	/**
 	 * Return min of 2 doubles
 	 * @param x
 	 * @param y
 	 * @return
 	 */
-	public synchronized static double min(double x, double y) {      return (x<y) ? x : y;    }
+	public static double min(double x, double y) {      return (x<y) ? x : y;    }
 	
 	/**
 	 * Return max of 3 ints
 	 */
-	public synchronized static int max(int x, int y, int z) {      return max(max(x,y),z);  }
+	public static int max(int x, int y, int z) {      return max(max(x,y),z);  }
 	/**
 	 * Return min of 3 ints
 	 */
-	public synchronized static int min(int x, int y, int z) {      return min(min(x,y),z);  }
+	public static int min(int x, int y, int z) {      return min(min(x,y),z);  }
 	/**
 	 * Return max of 3 longs
 	 */
-	public synchronized static long max(long x, long y, long z) {      return max(max(x,y),z);  }
+	public static long max(long x, long y, long z) {      return max(max(x,y),z);  }
 	/**
 	 * Return min of 3 longs
 	 */
-	public synchronized static long min(long x, long y, long z) {      return min(min(x,y),z);  }
+	public static long min(long x, long y, long z) {      return min(min(x,y),z);  }
 	/**
 	 * Return max of 3 floats
 	 */
-	public synchronized static float max(float x, float y, float z) {      return max(max(x,y),z);  }
+	public static float max(float x, float y, float z) {      return max(max(x,y),z);  }
 	/**
 	 * Return min of 3 floats
 	 */
-	public synchronized static float min(float x, float y, float z) {      return min(min(x,y),z);  }	
+	public static float min(float x, float y, float z) {      return min(min(x,y),z);  }	
 	/**
 	 * Return max of 3 doubles
 	 */
-	public synchronized static double max(double x, double y, double z) {      return max(max(x,y),z);  }
+	public static double max(double x, double y, double z) {      return max(max(x,y),z);  }
 	/**
 	 * Return min of 3 doubles
 	 */
-	public synchronized static double min(double x, double y, double z) {      return min(min(x,y),z);  }
+	public static double min(double x, double y, double z) {      return min(min(x,y),z);  }
 	
 	/**
 	 * Return min(idx 0) and max (idx 1) of passed array of int values
 	 * @param valAra one or more values 
 	 * @return
 	 */
-	public synchronized static int[] minAndMax(int[] valAra) {    		
+	public static int[] minAndMax(int[] valAra) {    		
 		int[] res = new int[] {valAra[0], valAra[0]};
 		for (int i=1;i<valAra.length;++i) {	
 			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
@@ -570,7 +572,7 @@ public class MyMathUtils {
 	 * @param valAra one or more values 
 	 * @return
 	 */
-	public synchronized static long[] minAndMax(long[] valAra) {    		
+	public static long[] minAndMax(long[] valAra) {    		
 		long[] res = new long[] {valAra[0], valAra[0]};
 		for (int i=1;i<valAra.length;++i) {	
 			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
@@ -584,7 +586,7 @@ public class MyMathUtils {
 	 * @param valAra one or more values 
 	 * @return
 	 */
-	public synchronized static float[] minAndMax(float[] valAra) {    		
+	public static float[] minAndMax(float[] valAra) {    		
 		float[] res = new float[] {valAra[0], valAra[0]};
 		for (int i=1;i<valAra.length;++i) {	
 			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
@@ -598,7 +600,7 @@ public class MyMathUtils {
 	 * @param valAra one or more values 
 	 * @return
 	 */
-	public synchronized static double[] minAndMax(double[] valAra) {    		
+	public static double[] minAndMax(double[] valAra) {    		
 		double[] res = new double[] {valAra[0], valAra[0]};
 		for (int i=1;i<valAra.length;++i) {	
 			if(valAra[i] < res[0]){res[0] = valAra[i];}	//min value
@@ -611,20 +613,20 @@ public class MyMathUtils {
 	/**
      * return max value of any comparable type
      */
-    public synchronized static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
+    public static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
     /**
      * return min value of any comparable type
      */
-    public synchronized static <T extends Comparable<T>> T min(T x, T y) {      return (x.compareTo(y) < 0) ? x : y;    }
+    public static <T extends Comparable<T>> T min(T x, T y) {      return (x.compareTo(y) < 0) ? x : y;    }
    
     /**
      * return max value of any comparable type of 3 values
      */
-    public synchronized static <T extends Comparable<T>> T max(T x, T y, T z) {    	return max(max(x,y),z);    }
+    public static <T extends Comparable<T>> T max(T x, T y, T z) {    	return max(max(x,y),z);    }
     /**
      * return min value of any comparable type
      */
-    public synchronized static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
+    public static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
 
     
 	/**
@@ -634,7 +636,7 @@ public class MyMathUtils {
 	 * @param max maximum x value (inclusive)
 	 * @return if value is in specified range
 	 */
-    public synchronized static boolean inRange(double x, double min, double max) {return (x >= min)&&(x <= max); }	
+    public static boolean inRange(double x, double min, double max) {return (x >= min)&&(x <= max); }	
     
 	/**
 	 * Range checking of value, as floats
@@ -643,7 +645,7 @@ public class MyMathUtils {
 	 * @param max maximum x value (inclusive)
 	 * @return if value is in specified range
 	 */
-    public synchronized static boolean inRange(float x, float min, float max) {return (x >= min)&&(x <= max); }	
+    public static boolean inRange(float x, float min, float max) {return (x >= min)&&(x <= max); }	
     
 	/**
 	 * Range checking of value, as integers
@@ -652,7 +654,7 @@ public class MyMathUtils {
 	 * @param max maximum x value (inclusive)
 	 * @return if value is in specified range
 	 */
-    public synchronized static boolean inRange(int x, int min, int max) {return (x >= min)&&(x <= max); }	
+    public static boolean inRange(int x, int min, int max) {return (x >= min)&&(x <= max); }	
     
 	/**
 	 * Range checking of value, as longs
@@ -661,7 +663,7 @@ public class MyMathUtils {
 	 * @param max maximum x value (inclusive)
 	 * @return if value is in specified range
 	 */
-    public synchronized static boolean inRange(long x, long min, long max) {return (x >= min)&&(x <= max); }	
+    public static boolean inRange(long x, long min, long max) {return (x >= min)&&(x <= max); }	
     
 	/**
 	 * Range checking of value of any types that extend Comparable interface
@@ -670,7 +672,7 @@ public class MyMathUtils {
 	 * @param max maximum x value (inclusive)
 	 * @return if value is in specified range
 	 */
-    public synchronized static <T extends Comparable<T>> boolean inRange(T x, T min, T max) {return (x.compareTo(min) >=0) && (x.compareTo(max) <= 0); }	
+    public static <T extends Comparable<T>> boolean inRange(T x, T min, T max) {return (x.compareTo(min) >=0) && (x.compareTo(max) <= 0); }	
        
 	/**
 	 * 2d range checking of point, represented as doubles
@@ -682,7 +684,7 @@ public class MyMathUtils {
 	 * @param maxY maximum y value (inclusive)
 	 * @return if both values are in specified range
 	 */
-    public synchronized static boolean ptInRange(double x, double y, double minX, double minY, double maxX, double maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    public static boolean ptInRange(double x, double y, double minX, double minY, double maxX, double maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
     
 	/**
 	 * 2d range checking of point, represented as floats
@@ -694,7 +696,7 @@ public class MyMathUtils {
 	 * @param maxY maximum y value (inclusive)
 	 * @return if both values are in specified range
 	 */
-    public synchronized static boolean ptInRange(float x, float y, float minX, float minY, float maxX, float maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    public static boolean ptInRange(float x, float y, float minX, float minY, float maxX, float maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
     
 	/**
 	 * 2d range checking of point, represented as integers
@@ -706,7 +708,7 @@ public class MyMathUtils {
 	 * @param maxY maximum y value (inclusive)
 	 * @return if both values are in specified range
 	 */
-    public synchronized static boolean ptInRange(int x, int y, int minX, int minY, int maxX, int maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    public static boolean ptInRange(int x, int y, int minX, int minY, int maxX, int maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
     
 	/**
 	 * 2d range checking of point, represented as longs
@@ -718,7 +720,7 @@ public class MyMathUtils {
 	 * @param maxY maximum y value (inclusive)
 	 * @return if both values are in specified range
 	 */
-    public synchronized static boolean ptInRange(long x, long y, long minX, long minY, long maxX, long maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
+    public static boolean ptInRange(long x, long y, long minX, long minY, long maxX, long maxY) {return ((x >= minX)&&(x <= maxX)&&(y >= minY)&&(y <= maxY)); }	
     
 	/**
 	 * 2d range checking of points of any types that extend Comparable interface
@@ -730,7 +732,7 @@ public class MyMathUtils {
 	 * @param maxY maximum y value (inclusive)
 	 * @return if both values are in specified range
 	 */
-    public synchronized static <T extends Comparable<T>> boolean ptInRange(T x, T y, T minX, T minY, T maxX, T maxY) {
+    public static <T extends Comparable<T>> boolean ptInRange(T x, T y, T minX, T minY, T maxX, T maxY) {
     	return ((x.compareTo(minX) >=0) && (x.compareTo(maxX) <= 0) && (y.compareTo(minY) >=0) && (y.compareTo(maxY) <= 0) );
     }	
 	
@@ -741,7 +743,7 @@ public class MyMathUtils {
 	 * @param max array of max bounds (inclusive)
 	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static boolean valuesInRange(double[] vals, double[] mins, double[] maxs) {
+	public static boolean valuesInRange(double[] vals, double[] mins, double[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
@@ -757,7 +759,7 @@ public class MyMathUtils {
 	 * @param max array of max bounds (inclusive)
 	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static boolean valuesInRange(float[] vals, float[] mins, float[] maxs) {
+	public static boolean valuesInRange(float[] vals, float[] mins, float[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
@@ -773,7 +775,7 @@ public class MyMathUtils {
 	 * @param max array of max bounds (inclusive)
 	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static boolean valuesInRange(int[] vals, int[] mins, int[] maxs) {
+	public static boolean valuesInRange(int[] vals, int[] mins, int[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
@@ -789,7 +791,7 @@ public class MyMathUtils {
 	 * @param max array of max bounds (inclusive)
 	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static boolean valuesInRange(long[] vals, long[] mins, long[] maxs) {
+	public static boolean valuesInRange(long[] vals, long[] mins, long[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
@@ -805,7 +807,7 @@ public class MyMathUtils {
 	 * @param max array of max bounds (inclusive)
 	 * @return whether entire value array is within bounds
 	 */
-	public synchronized static <T extends Comparable<T>> boolean valuesInRange(T[] vals, T[] mins, T[] maxs) {
+	public static <T extends Comparable<T>> boolean valuesInRange(T[] vals, T[] mins, T[] maxs) {
 		if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}	//insufficient bounds passed
 		int len = vals.length;
 		for(int i=0;i<len;++i) {
