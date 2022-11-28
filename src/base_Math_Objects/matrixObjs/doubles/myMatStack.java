@@ -1,4 +1,5 @@
-package base_Math_Objects.vectorObjs.doubles;
+package base_Math_Objects.matrixObjs.doubles;
+
 /**
  * Matrix stack structure, to mimic GL transformation stack
  * @author 7strb
@@ -19,12 +20,26 @@ public class myMatStack {
 	/**
 	 * add the current top of the matrix stack to the matrix stack in a higher position
 	 */
-	public void push(){ ++top; initStackLocation(top);  for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){  s[top].m[row][col] = s[top - 1].m[row][col]; }}}//push     	
+	public void push(){ 
+		++top; 
+		initStackLocation(top);  
+		for (int row = 0; row < s[top].m.length; ++row){ 
+			for (int col = 0; col < s[top].m[row].length; ++col){  
+				s[top].m[row][col] = s[top - 1].m[row][col]; 
+			}
+		}
+	}//push     	
 	/**
 	 * replace the current top of the matrix stack with a new matrix
 	 * @param newTopMatrix
 	 */
-	public void replaceTop(myMatrix newTopMatrix){for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){ s[top].m[row][col] = newTopMatrix.m[row][col]; }}}//replaceTop	
+	public void replaceTop(myMatrix newTopMatrix){
+		for (int row = 0; row < s[top].m.length; ++row){ 
+			for (int col = 0; col < s[top].m[row].length; ++col){  
+				s[top].m[row][col] = newTopMatrix.m[row][col]; 
+			}
+		}
+	}//replaceTop	
 	/**
 	 * return the top of the matrix stack without popping
 	 * @return

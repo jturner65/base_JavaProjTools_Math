@@ -1,4 +1,5 @@
-package base_Math_Objects.vectorObjs.floats;
+package base_Math_Objects.matrixObjs.floats;
+
 /**
  * floating point matrix stack - use float based matrices for potential speedup/footprint
  * @author 7strb

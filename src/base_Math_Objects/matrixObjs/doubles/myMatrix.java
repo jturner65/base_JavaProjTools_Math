@@ -1,11 +1,13 @@
-package base_Math_Objects.vectorObjs.doubles;
+package base_Math_Objects.matrixObjs.doubles;
+
+import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public class myMatrix {	  
 	public double[][] m;
-	
+		
 	public myMatrix(){  m = new double[4][4]; initMat();}
 	public myMatrix(double[][] _m) {
-		m = new double[4][4];
+		m = new double[_m.length][_m[0].length];
 		for(int row=0;row<m.length;++row) {
 			for(int col=0;col<m[row].length;++col) {m[row][col]=_m[row][col];}	
 		}
@@ -21,6 +23,12 @@ public class myMatrix {
 	} 
 	
 	/**
+	 * Returns identity matrix
+	 * @return
+	 */
+	public static final myMatrix Identity() {return new myMatrix();}
+	
+	/**
 	 * multiplies this matrix by b, in order: [this] x [b] returns result in result
 	 * @param b
 	 * @return
@@ -30,7 +38,7 @@ public class myMatrix {
 		myMatrix result = new myMatrix();
 		for (int row = 0; row < this.m.length; ++row){
 			for (int col = 0; col < this.m[row].length; ++col){
-				for (int k = 0; k < this.m[row].length; k++){
+				for (int k = 0; k < b.m.length; k++){
 					resultVal += this.m[row][k] * b.getValByIdx(k,col);
 				}
 				result.setValByIdx(row,col,resultVal); 
@@ -49,9 +57,9 @@ public class myMatrix {
 	public double[] multVert(double[] b){
 		double resultVal;
 		double[] result = new double[]{0,0,0,0};
-		for (int row = 0; row < 4; ++row){
+		for (int row = 0; row < this.m.length; ++row){
 			resultVal = 0;
-			for (int col = 0; col < 4; ++col){resultVal += this.m[row][col] * b[col];}	
+			for (int col = 0; col < this.m[row].length; ++col){resultVal += this.m[row][col] * b[col];}	
 			result[row] = resultVal;
 		}//for row
 		return result;  
@@ -86,14 +94,6 @@ public class myMatrix {
 		return result;    
 	}//method invert
 	
-	/**
-	 * Finds the inverse of this matrix, if it is invertible. Otherwise, returns Identity matrix
-	 * @return
-	 */
-	public myMatrix inverseOld(){
-		myMatrix result = this.InvertMe();
-		return result;    
-	}//method invert
 	/**
 	 * Find the inverse of the passed matrix, by finding the determinant, checking value to see if invertible, 
 	 * and then finding the Adjoint, and scaling it by 1/det. If not invertible, returns M sized Identity
@@ -271,108 +271,6 @@ public class myMatrix {
 		return res;
 	}//getMatAsArray
 	
-	
-	//------------- inversion code
-	/**
-	 * Invert this matrix - replaced by above determinant + cofactor
-	 * @return
-	 */
-	private myMatrix InvertMe(){
-		double[] tmp = new double[12];   // temp array for pairs
-		double[] src = new double[16];   // array of transpose source matrix
-		double[] dst = new double[16];   //destination matrix, in array form
-		double det = 0;       // determinant 
-		myMatrix dstMat = new myMatrix();
-		//convert this matrix to array form and set up source vector
-		for(int row = 0; row < this.m.length; ++row){ 
-			for(int col = 0; col < this.m[row].length; ++col){ 
-				src[(4*col) + row] = this.m[row][col];	
-			}
-		}
-		
-		// calculate pairs for first 8 elements (cofactors)
-		tmp[0] = src[10] * src[15];
-		tmp[1] = src[11] * src[14];
-		tmp[2] = src[9] * src[15];
-		tmp[3] = src[11] * src[13];
-		tmp[4] = src[9] * src[14];
-		tmp[5] = src[10] * src[13];
-		tmp[6] = src[8] * src[15];
-		tmp[7] = src[11] * src[12];
-		tmp[8] = src[8] * src[14];
-		tmp[9] = src[10] * src[12];
-		tmp[10] = src[8] * src[13];
-		tmp[11] = src[9] * src[12];
-		
-		// calculate first 8 elements (cofactors) 	  
-		dst[0] = tmp[0]*src[5] + tmp[3]*src[6] + tmp[4]*src[7];
-		dst[0] -= tmp[1]*src[5] + tmp[2]*src[6] + tmp[5]*src[7];
-		dst[1] = tmp[1]*src[4] + tmp[6]*src[6] + tmp[9]*src[7];
-		dst[1] -= tmp[0]*src[4] + tmp[7]*src[6] + tmp[8]*src[7];
-		dst[2] = tmp[2]*src[4] + tmp[7]*src[5] + tmp[10]*src[7];
-		dst[2] -= tmp[3]*src[4] + tmp[6]*src[5] + tmp[11]*src[7];
-		dst[3] = tmp[5]*src[4] + tmp[8]*src[5] + tmp[11]*src[6];
-		dst[3] -= tmp[4]*src[4] + tmp[9]*src[5] + tmp[10]*src[6];
-		dst[4] = tmp[1]*src[1] + tmp[2]*src[2] + tmp[5]*src[3];
-		dst[4] -= tmp[0]*src[1] + tmp[3]*src[2] + tmp[4]*src[3];
-		dst[5] = tmp[0]*src[0] + tmp[7]*src[2] + tmp[8]*src[3];
-		dst[5] -= tmp[1]*src[0] + tmp[6]*src[2] + tmp[9]*src[3];
-		dst[6] = tmp[3]*src[0] + tmp[6]*src[1] + tmp[11]*src[3];
-		dst[6] -= tmp[2]*src[0] + tmp[7]*src[1] + tmp[10]*src[3];
-		dst[7] = tmp[4]*src[0] + tmp[9]*src[1] + tmp[10]*src[2];
-		dst[7] -= tmp[5]*src[0] + tmp[8]*src[1] + tmp[11]*src[2];
-		
-		// calculate pairs for second 8 elements (cofactors) 
-		
-		tmp[0] = src[2]*src[7];
-		tmp[1] = src[3]*src[6];
-		tmp[2] = src[1]*src[7];
-		tmp[3] = src[3]*src[5];
-		tmp[4] = src[1]*src[6];
-		tmp[5] = src[2]*src[5];
-		tmp[6] = src[0]*src[7];
-		tmp[7] = src[3]*src[4];
-		tmp[8] = src[0]*src[6];
-		tmp[9] = src[2]*src[4];
-		tmp[10] = src[0]*src[5];
-		tmp[11] = src[1]*src[4];
-		
-		// calculate second 8 elements (cofactors)
-		
-		dst[8] = tmp[0]*src[13] + tmp[3]*src[14] + tmp[4]*src[15];
-		dst[8] -= tmp[1]*src[13] + tmp[2]*src[14] + tmp[5]*src[15];
-		dst[9] = tmp[1]*src[12] + tmp[6]*src[14] + tmp[9]*src[15];
-		dst[9] -= tmp[0]*src[12] + tmp[7]*src[14] + tmp[8]*src[15];
-		dst[10] = tmp[2]*src[12] + tmp[7]*src[13] + tmp[10]*src[15];
-		dst[10]-= tmp[3]*src[12] + tmp[6]*src[13] + tmp[11]*src[15];
-		dst[11] = tmp[5]*src[12] + tmp[8]*src[13] + tmp[11]*src[14];
-		dst[11]-= tmp[4]*src[12] + tmp[9]*src[13] + tmp[10]*src[14];
-		dst[12] = tmp[2]*src[10] + tmp[5]*src[11] + tmp[1]*src[9];
-		dst[12]-= tmp[4]*src[11] + tmp[0]*src[9] + tmp[3]*src[10];
-		dst[13] = tmp[8]*src[11] + tmp[0]*src[8] + tmp[7]*src[10];
-		dst[13]-= tmp[6]*src[10] + tmp[9]*src[11] + tmp[1]*src[8];
-		dst[14] = tmp[6]*src[9] + tmp[11]*src[11] + tmp[3]*src[8];
-		dst[14]-= tmp[10]*src[11] + tmp[2]*src[8] + tmp[7]*src[9];
-		dst[15] = tmp[10]*src[10] + tmp[4]*src[8] + tmp[9]*src[9];
-		dst[15]-= tmp[8]*src[9] + tmp[11]*src[10] + tmp[5]*src[8];
-		
-		// calculate determinant 		
-		det=src[0]*dst[0]+src[1]*dst[1]+src[2]*dst[2]+src[3]*dst[3];
-		if(Math.abs(det) > .0000001){		
-			for (int j = 0; j < dst.length; ++j){ dst[j] /= det; }	    
-			 //convert dst array to matrix
-			for(int row = 0; row < dstMat.m.length; ++row){ 
-				for(int col = 0; col < dstMat.m[row].length; ++col){  
-					dstMat.m[row][col] = dst[(dstMat.m[row].length*row) + col];
-				}
-			}
-		} else {
-			System.out.println("uninvertible matrix -> det == 0");
-		}
-		return dstMat;
-	}//invertme code	
-	//end------------inversion code
-	
 	public double getValByIdx(int row, int col){   return m[row][col]; }  
 	public void setValByIdx(int row, int col, double val){	   m[row][col] = val; }
 	
@@ -394,7 +292,7 @@ public class myMatrix {
 	
 	public String toString(){
 	    String result = "", tmp2str = "",tmpString;
-	    for (int row = 0; row < 4; ++row){
+	    for (int row = 0; row < this.m.length; ++row){
 	    	result += "[";
 	    	for (int col = 0; col < this.m[row].length; ++col){   tmp2str = "" + m[row][col]; if (col != this.m[row].length-1) {tmp2str += ", ";} result += tmp2str;}
 	    	tmpString = "]";  if (row != this.m.length-1) { tmpString += "\n"; }
