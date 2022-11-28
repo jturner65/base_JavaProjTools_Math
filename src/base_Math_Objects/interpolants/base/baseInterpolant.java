@@ -56,7 +56,7 @@ public abstract class baseInterpolant {
 	public final void setAnimBehavior(int _idx) {animBehavior = InterpolantBehavior.getVal(_idx);}
 	
 	public final void setValue(float _t) {
-		raw_t=(_t<0 ? 0 : _t>1 ? 1 : _t);
+		raw_t=(_t<0 ? 0 : _t>1.0f ? 1.0f : _t);
 		isStopped = false;	
 		t=calcInterpolant(raw_t);
 	}
