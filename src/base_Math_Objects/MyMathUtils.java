@@ -553,6 +553,88 @@ public class MyMathUtils {
 	 */
 	public static double min(double x, double y, double z) {      return min(min(x,y),z);  }
 	
+	
+	/**
+	 * Return max of array of ints
+	 */
+	public static int max(int[] valAra) {      
+		int res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] > res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return min of array of ints
+	 */
+	public static int min(int[] valAra) {
+		int res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return max of array of longs
+	 */
+	public static long max(long[] valAra) {      
+		long res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] > res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return min of array of longs
+	 */
+	public static long min(long[] valAra) {
+		long res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return max of array of floats
+	 */
+	public static float max(float[] valAra) {
+		float res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] > res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return min of array of floats
+	 */
+	public static float min(float[] valAra) {
+		float res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res){res = valAra[i];}	
+		}
+		return res; 
+	}	
+	/**
+	 * Return max of array of double
+	 */
+	public static double max(double[] valAra) {
+		double res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] > res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	/**
+	 * Return min of array of double
+	 */
+	public static double min(double[] valAra) {
+		double res = valAra[0];
+		for (int i=1;i<valAra.length;++i) {	
+			if(valAra[i] < res){res = valAra[i];}	
+		}
+		return res; 
+	}
+	
 	/**
 	 * Return min(idx 0) and max (idx 1) of passed array of int values
 	 * @param valAra one or more values 

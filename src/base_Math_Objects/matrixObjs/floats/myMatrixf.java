@@ -1,5 +1,6 @@
 package base_Math_Objects.matrixObjs.floats;
 
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 public class myMatrixf {
@@ -64,6 +65,41 @@ public class myMatrixf {
 		}//for row
 		return result;  
 	}//mult method
+	
+	/**
+	 * Transform passed point by this matrix. Converts point to homogeneous coordinates
+	 * @param pt
+	 * @return
+	 */
+	public myPointf transformPoint(myPointf pt) {
+		float[] res = multVert(pt.asHAraPt());
+		return new myPointf(res[0],res[1],res[2]);
+	}
+	
+	/**
+	 * Transform passed point by this matrix into homogeneous coordinate array. Converts point to homogeneous coordinates
+	 * @param pt
+	 * @return
+	 */
+	public float[] transformPointIntoAra(myPointf pt) {return multVert(pt.asHAraPt());}
+	
+	
+	/**
+	 * Transform passed vector by this matrix. Converts vector to homogeneous coordinates
+	 * @param vec
+	 * @return
+	 */
+	public myVectorf transformVector(myVectorf vec) {
+		float[] res = multVert(vec.asHAraVec());
+		return new myVectorf(res[0],res[1],res[2]);
+	}
+	
+	/**
+	 * Transform passed vector by this matrix into homogeneous coordinate array. Converts vector to homogeneous coordinates
+	 * @param vec
+	 * @return
+	 */
+	public float[] transformVectorIntoAra(myVectorf vec) {return multVert(vec.asHAraVec());}
 	
 	
 	/**

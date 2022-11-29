@@ -1,5 +1,6 @@
 package base_Math_Objects.matrixObjs.doubles;
 
+import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public class myMatrix {	  
@@ -47,7 +48,7 @@ public class myMatrix {
 		}
 		return result;  
 	}//mult method
-		
+	
 	/**
 	 * multiplies this matrix by vertex b, in order: [this] x [b]
 	 * returns result vertex in result
@@ -65,6 +66,40 @@ public class myMatrix {
 		return result;  
 	}//mult method
 
+	/**
+	 * Transform passed point by this matrix. Converts point to homogeneous coordinates
+	 * @param pt
+	 * @return
+	 */
+	public myPoint transformPoint(myPoint pt) {
+		double[] res = multVert(pt.asHAraPt());
+		return new myPoint(res[0],res[1],res[2]);
+	}
+	
+	/**
+	 * Transform passed point by this matrix into homogeneous coordinate array. Converts point to homogeneous coordinates
+	 * @param pt
+	 * @return
+	 */
+	public double[] transformPointIntoAra(myPoint pt) {return multVert(pt.asHAraPt());}
+	
+	/**
+	 * Transform passed vector by this matrix. Converts vector to homogeneous coordinates
+	 * @param vec
+	 * @return
+	 */
+	public myVector transformVector(myVector vec) {
+		double[] res = multVert(vec.asHAraVec());
+		return new myVector(res[0],res[1],res[2]);
+	}
+	
+	/**
+	 * Transform passed vector by this matrix into homogeneous coordinate array. Converts vector to homogeneous coordinates
+	 * @param vec
+	 * @return
+	 */
+	public double[] transformVectorIntoAra(myVector vec) {return multVert(vec.asHAraVec());}
+	
 	
 	/**
 	 * Multiply ever element of this matrix by passed scale amount
