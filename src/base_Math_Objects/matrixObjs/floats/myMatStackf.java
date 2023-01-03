@@ -5,7 +5,7 @@ import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 /**
  * floating point matrix stack - use float based matrices for potential speedup/footprint
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myMatStackf {

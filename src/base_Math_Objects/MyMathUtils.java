@@ -60,7 +60,48 @@ public class MyMathUtils {
     protected static final int MAX_DIGITS_EXP = 677;
     protected static final int MAX_DIGITS_10 = 294; // ~ MAX_DIGITS_EXP/LN(10)
     protected static final int MAX_DIGITS_2 = 977; // ~ MAX_DIGITS_EXP/LN(2)
-	
+        
+    /**
+     * # of pre-computed cosine and sine values.  
+     */
+    public static final float numTrigVals = 36.0f;
+    /**
+     * Pre-computed array of {@value #numTrigVals} cosine values 0->2pi
+     */
+    public static final double[] preCalcCosVals;
+    /**
+     * Pre-computed array of {@value #numTrigVals} sine values 0->2pi
+     */
+    public static final double[] preCalcSinVals;
+    
+    private static final float deltaThet = TWO_PI_F/numTrigVals,
+			finalThet = TWO_PI_F+deltaThet;
+    /**
+     * Pre-computed array of {@value #numTrigVals} float cosine values 0->2pi
+     */
+    public static final float[] preCalcCosVals_f;
+    /**
+     * Pre-computed array of {@value #numTrigVals} float sine values 0->2pi
+     */
+    public static final float[] preCalcSinVals_f;
+    
+    /**
+     * Build arrays of precomputed sine and cosine values
+     */
+    static {
+      	preCalcCosVals = new double[(int)numTrigVals + 2];
+      	preCalcSinVals = new double[(int)numTrigVals + 2];
+	   	preCalcCosVals_f = new float[(int)numTrigVals + 2];
+	   	preCalcSinVals_f = new float[(int)numTrigVals + 2];
+		int i=0;
+		for(float a=0; a<=finalThet; a+=deltaThet) {
+			preCalcCosVals[i] = Math.cos(a);
+			preCalcSinVals[i] = Math.sin(a);
+			preCalcCosVals_f[i] = (float) preCalcCosVals[i];
+			preCalcSinVals_f[i] = (float) preCalcSinVals[i];
+			++i;
+		}      	
+     }
 
 	//shouldn't be instanced
 	private MyMathUtils() {	}
@@ -80,7 +121,14 @@ public class MyMathUtils {
 		if(resSq <= 0) {return 0;}
 		return Math.sqrt(resSq); 
 	}
-		
+	
+	/**
+	 * find distance of P to line determined by AB
+	 * @param P
+	 * @param A
+	 * @param B
+	 * @return
+	 */	
 	public static float distToLine(myPointf P, myPointf A, myPointf B) {
 		myVectorf AB = new myVectorf(A,B),AP = new myVectorf(A,P);
 		AB._normalize();
@@ -100,6 +148,12 @@ public class MyMathUtils {
 		myVector AB = new myVector(A,B), AP = new myVector(A,P);
 		return new myPoint(A,AB._dot(AP)/(AB._dot(AB)),AB);
 	}
+	/**
+	 * return the projection point of P on line determined by AB between A and B
+	 * @param P point to investigate
+	 * @param A,B line seg endpoints
+	 * @return 
+	 */	
 	public static myPointf projectionOnLine(myPointf P, myPointf A, myPointf B) {
 		myVectorf AB = new myVectorf(A,B), AP = new myVectorf(A,P);
 		return new myPointf(A,AB._dot(AP)/(AB._dot(AB)),AB);
@@ -116,6 +170,12 @@ public class MyMathUtils {
 		myVector BP = new myVector(B,P), BA = new myVector(B,A);		
 		return BP._dot(BA)>0 ; 						//if not greater than 0 than won't project onto AB - past B away from segment
 	}
+	/**
+	 * return true if P orthogonally projects onto line determined by AB between A and B
+	 * @param P point to investigate
+	 * @param A,B line seg endpoints
+	 * @return
+	 */
 	public static boolean projectsBetween(myPointf P, myPointf A, myPointf B) {
 		myVectorf AP = new myVectorf(A,P), AB = new myVectorf(A,B);
 		if(AP._dot(AB) <= 0) {return false;}		//if not greater than 0 than won't project onto AB - past A away from segment
@@ -723,7 +783,6 @@ public class MyMathUtils {
      * return min value of any comparable type
      */
     public static <T extends Comparable<T>> T min(T x, T y, T z) {    	return min(min(x,y),z);     }
-
     
 	/**
 	 * Range checking of value, as double
@@ -911,8 +970,6 @@ public class MyMathUtils {
 		}		
 		return true;
 	}
-
-    
      
 }//math utils
 

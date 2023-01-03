@@ -5,7 +5,7 @@ import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
  * Matrix stack structure, to mimic GL transformation stack
- * @author 7strb
+ * @author John Turner
  *
  */
 public class myMatStack {
