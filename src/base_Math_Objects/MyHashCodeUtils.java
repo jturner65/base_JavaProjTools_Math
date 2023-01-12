@@ -46,10 +46,7 @@ public final class MyHashCodeUtils {
 	}
 	
 	/** longs.  */
-	public static int hash(int aSeed , long aLong) {
-	
-	  return firstTerm(aSeed)  + (int)(aLong ^ (aLong >>> 32));
-	}
+	public static int hash(int aSeed , long aLong) {  return firstTerm(aSeed)  + (int)(aLong ^ (aLong >>> 32));}
 	
 	/** floats.  */
 	public static int hash(int aSeed , float aFloat) {	  return hash(aSeed, Float.floatToIntBits(aFloat));	}

@@ -73,6 +73,18 @@ public class myQuaternion {
 		return _lerp(qa, qb, Math.sin((1 - t) * halfTheta)/s , Math.sin(t * halfTheta) / s);
 	}//_slerp
 	
+	/**
+	 * returns if this quaternion is equal to passed quaternion
+	 * @param b myQuaternion to check
+	 * @return whether they are equal
+	 */
+	@Override
+	public boolean equals(Object b){
+		if (this == b) return true;
+		if (b instanceof myQuaternion v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z) && (this.w == v.w));}
+		return false;
+	}
+	
 	public String toString(){return "vec:"+v.toStrBrf() + "\tw:"+ String.format("%.4f",w);}	
 	public String toStringDbg(){return this.toString()+"\tx:"+x+"\ty:"+y+"\tz:"+z;}	
 

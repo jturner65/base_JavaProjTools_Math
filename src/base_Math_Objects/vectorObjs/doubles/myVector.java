@@ -244,12 +244,13 @@ public class myVector extends myPoint{
 	 * @param b vector to check
 	 * @return whether they are equal
 	 */
+	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (!(b instanceof myVector)) return false;
-		myVector v = (myVector)b;
-		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
-	}				
+		if (b instanceof myVector v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
+		return false;
+	}
+	
 	public String toStrCSV(){return toStrCSV("%.4f");}	
 	public String toStrCSV(String fmt){return super.toStrCSV(fmt) + ", " + String.format(fmt,this.magn) + ", " + String.format(fmt,this.sqMagn);}	
 	public String toStrBrf(){return super.toStrBrf() + ", " + String.format("%.4f",this.magn) + ", " + String.format("%.4f",this.sqMagn);}	

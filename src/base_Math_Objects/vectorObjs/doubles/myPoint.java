@@ -336,8 +336,7 @@ public class myPoint {
 	    	denom = d00 * d11 - d01 * d01,
 	    	v = (d11 * d20 - d01 * d21) / denom,
 	    	w =  (d00 * d21 - d01 * d20) / denom,
-	    	u = 1.0f - v- w;
-		
+	    	u = 1.0f - v- w;		
 		return new double[] {u,v,w};
 	}
 	
@@ -366,7 +365,7 @@ public class myPoint {
 		double c=Math.cos(a), s=Math.sin(a); 
 		double iXVal = x*c-x-y*s, jYVal= x*s+y*c-y;			
 		return myPoint._add(this,iXVal,I,jYVal,J); 
-	}; 
+	}
 	
 	/**
 	 * returns rotated version of this point by angle(CP,CR) parallel to plane (C,P,R)
@@ -385,18 +384,26 @@ public class myPoint {
 		return myPoint._add(this,x,myVector._sub(I1,I0),y,myVector._sub(J1,J0)); 
 	} 	
 	
-	public boolean clickIn(myPoint p, double eps) { return(_dist(p) < eps);}
 	/**
-	 * returns if this pttor is equal to passed pttor
+	 * Returns whether the passed point is within eps of this point
+	 * @param p
+	 * @param eps
+	 * @return
+	 */	
+	public boolean clickIn(myPoint p, double eps) { return(_dist(p) < eps);}
+	
+	/**
+	 * returns if this myPoint is equal to passed myPoint
 	 * @param b myPoint to check
 	 * @return whether they are equal
 	 */
+	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (!(b instanceof myPoint)) return false;
-		myPoint v = (myPoint)b;
-		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
-	}				
+		if (b instanceof myPoint v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
+		return false;			
+	}//equals
+	
 	public String toStrCSV(){return toStrCSV("%.4f");}	
 	public String toStrCSV(String fmt){return "" + String.format(fmt,this.x) + ", " + String.format(fmt,this.y) + ", " + String.format(fmt,this.z);}	
 	public String toStrBrf(){return "(" + String.format("%.4f",this.x) + ", " + String.format("%.4f",this.y) + ", " + String.format("%.4f",this.z)+")";}	

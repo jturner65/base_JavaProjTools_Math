@@ -359,8 +359,7 @@ public class myPointf {
 	    	denom = d00 * d11 - d01 * d01,
 	    	v = (d11 * d20 - d01 * d21) / denom,
 	    	w =  (d00 * d21 - d01 * d20) / denom,
-	    	u = 1.0f - v- w;
-		
+	    	u = 1.0f - v- w;		
 		return new float[] {u,v,w};
 	}
 	
@@ -389,8 +388,7 @@ public class myPointf {
 		double c=Math.cos(a), s=Math.sin(a); 
 		float iXVal = (float) (x*c-x-y*s), jYVal= (float) (x*s+y*c-y);			
 		return myPointf._add(this,iXVal,I,jYVal,J); 
-	}; 
-	
+	}
 	
 	/**
 	 * returns rotated version of this point by angle(CP,CR) parallel to plane (C,P,R)
@@ -407,10 +405,16 @@ public class myPointf {
 		myVectorf J1=myVectorf._add(myVectorf._mult(I0,-s),myVectorf._mult(J0,c));  
 		float x=V._dot(I0), y=V._dot(J0);  
 		return myPointf._add(this,x,myVectorf._sub(I1,I0),y,myVectorf._sub(J1,J0)); 
-	} 	
-
+	}
 	
+	/**
+	 * Returns whether the passed point is within eps of this point
+	 * @param p
+	 * @param eps
+	 * @return
+	 */
 	public boolean clickIn(myPointf p, float eps) { return(_dist(p) < eps);}
+	
 	/**
 	 * returns if this pttor is equal to passed pttor
 	 * @param b myPointf to check
@@ -418,9 +422,8 @@ public class myPointf {
 	 */
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (!(b instanceof myPointf)) return false;
-		myPointf v = (myPointf)b;
-		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
+		if (b instanceof myPointf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
+		return false;
 	}
 	
 	public String toStrCSV(){return toStrCSV("%.4f");}	

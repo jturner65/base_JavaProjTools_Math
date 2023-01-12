@@ -218,18 +218,18 @@ public class myVectorf extends myPointf{
 		if(sign<0){    angle=-angle;}	
 		return angle;
 	}
-
 	/**
 	 * returns if this vector is equal to passed vector
 	 * @param b vector to check
 	 * @return whether they are equal
 	 */
+	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (!(b instanceof myVectorf)) return false;
-		myVectorf v = (myVectorf)b;
-		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
-	}				
+		if (b instanceof myVectorf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
+		return false;
+	}
+			
 	public String toStrCSV(){return toStrCSV("%.4f");}	
 	public String toStrCSV(String fmt){return super.toStrCSV(fmt) + ", " + String.format(fmt,this.magn) + ", " + String.format(fmt,this.sqMagn);}	
 	public String toStrBrf(){return super.toStrBrf() + ", " + String.format("%.4f",this.magn) + ", " + String.format("%.4f",this.sqMagn);}	
