@@ -37,7 +37,8 @@ public enum InterpolantBehavior {
 	public static String getBrfNameByVal(int _val) {return _typeBrfName[_val];}
 	public static String getExplanationByVal(int _val) {return _typeExplanation[_val];}
 	@Override
-    public String toString() { return ""+value + ":"+_typeExplanation[value]; }	
+    public String toString() { return ""+this.name()+":"+_typeExplanation[value]; }	
+    public String toStrBrf() { return ""+_typeExplanation[value]; }	
 
 }// enum InterpolantBehavior 
 
