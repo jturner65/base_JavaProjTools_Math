@@ -1,12 +1,12 @@
 package base_Math_Objects.interpolants;
 
-import base_Math_Objects.interpolants.base.baseInterpolant;
+import base_Math_Objects.interpolants.base.Base_Interpolant;
 /**
  * 5th order interpolant with continous accel
  * @author john
  *
  */
-public class Quintic_Interpolant extends baseInterpolant {
+public class Quintic_Interpolant extends Base_Interpolant {
 
 	public Quintic_Interpolant(float _t) {	super(_t);}
 	public Quintic_Interpolant(float _t, float _stopTimer) {super(_t,_stopTimer);}
