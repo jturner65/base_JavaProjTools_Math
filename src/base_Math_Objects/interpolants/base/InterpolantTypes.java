@@ -1,4 +1,4 @@
-package base_Math_Objects.interpolants;
+package base_Math_Objects.interpolants.base;
 
 import java.util.HashMap;
 import java.util.Map;

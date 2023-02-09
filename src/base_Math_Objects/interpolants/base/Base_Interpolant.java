@@ -1,8 +1,6 @@
 package base_Math_Objects.interpolants.base;
 
 import base_Math_Objects.interpolants.Cubic_Interpolant;
-import base_Math_Objects.interpolants.InterpolantBehavior;
-import base_Math_Objects.interpolants.InterpolantTypes;
 import base_Math_Objects.interpolants.Linear_Interpolant;
 import base_Math_Objects.interpolants.Quintic_Interpolant;
 import base_Math_Objects.interpolants.Sine_Interpolant;
@@ -13,7 +11,7 @@ import base_Math_Objects.interpolants.Sine_Interpolant;
  * @author john
  *
  */
-public abstract class baseInterpolant {
+public abstract class Base_Interpolant {
 	
 	/**
 	 * basic interpolant - always between 0 and 1 and linearly evolved
@@ -42,11 +40,11 @@ public abstract class baseInterpolant {
 	private InterpolantBehavior animBehavior; 
 	
 	
-	public baseInterpolant(float _t) {
+	public Base_Interpolant(float _t) {
 		this(_t, _dfltStopTimerDur);
 	}
 	
-	public baseInterpolant(float _t, float _stopTimerDur) {
+	public Base_Interpolant(float _t, float _stopTimerDur) {
 		setValue(_t);
 		setAnimBehavior(0);
 		stopTimerDur = _stopTimerDur;	
@@ -165,24 +163,24 @@ public abstract class baseInterpolant {
 	protected abstract float calcInterpolant_Indiv(float _rawt);
 	
 	/**
-	 * build an interpolant of passed type, for type defined in baseInterpolant
+	 * build an interpolant of passed type, for type defined in Base_Interpolant
 	 * @param animType
 	 * @return
 	 */
-	public static baseInterpolant buildInterpolant(InterpolantTypes animType, float _initT) {return buildInterpolant(animType, _initT, _dfltStopTimerDur);}
-	public static baseInterpolant buildInterpolant(InterpolantTypes animType, float _initT, float _stopTime) {
+	public static Base_Interpolant buildInterpolant(InterpolantTypes animType, float _initT) {return buildInterpolant(animType, _initT, _dfltStopTimerDur);}
+	public static Base_Interpolant buildInterpolant(InterpolantTypes animType, float _initT, float _stopTime) {
 		switch(animType) {
 			case linear 				: {		return new Linear_Interpolant(_initT,_stopTime);		}
 			case smoothVelocity			: {		return new Cubic_Interpolant(_initT,_stopTime);		}
 			case smoothAccel 			: {		return new Quintic_Interpolant(_initT,_stopTime);		}
 			case sine					: {		return new Sine_Interpolant(_initT,_stopTime);		}
 			default : {
-				System.out.println("baseInterpolant :: buildInterpolant :: Unknown interpolant type : " + animType.toString() + ".  Aborting.");
+				System.out.println("Base_Interpolant :: buildInterpolant :: Unknown interpolant type : " + animType.toString() + ".  Aborting.");
 				return null;
 			}
 		}
 	}//buildInterpolant
 	
 
-}//class baseInterpolant
+}//class Base_Interpolant
 
