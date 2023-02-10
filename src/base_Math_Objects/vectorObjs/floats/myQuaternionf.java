@@ -1,5 +1,6 @@
 package base_Math_Objects.vectorObjs.floats;
 
+
 public class myQuaternionf {
 	myVectorf v;
 	public float x,y,z,w,  magn, sqMagn;
@@ -82,8 +83,9 @@ public class myQuaternionf {
 	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (b instanceof myQuaternionf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z) && (this.w == v.w));}
-		return false;
+		if (!(b instanceof myQuaternionf)) return false;
+		myQuaternionf v = (myQuaternionf)b;
+		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
 	}
 	
 	public String toString(){return "vec:"+v.toStrBrf() + "\t w:"+ String.format("%.4f",w);}	

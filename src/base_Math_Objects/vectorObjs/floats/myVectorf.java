@@ -226,9 +226,10 @@ public class myVectorf extends myPointf{
 	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (b instanceof myVectorf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
-		return false;
-	}
+		if (!(b instanceof myVectorf)) return false;
+		myVectorf v = (myVectorf)b;
+		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
+	}	
 			
 	public String toStrCSV(){return toStrCSV("%.4f");}	
 	public String toStrCSV(String fmt){return super.toStrCSV(fmt) + ", " + String.format(fmt,this.magn) + ", " + String.format(fmt,this.sqMagn);}	

@@ -81,9 +81,10 @@ public class myQuaternion {
 	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (b instanceof myQuaternion v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z) && (this.w == v.w));}
-		return false;
-	}
+		if (!(b instanceof myQuaternion)) return false;
+		myQuaternion v = (myQuaternion)b;
+		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
+	}	
 	
 	public String toString(){return "vec:"+v.toStrBrf() + "\tw:"+ String.format("%.4f",w);}	
 	public String toStringDbg(){return this.toString()+"\tx:"+x+"\ty:"+y+"\tz:"+z;}	

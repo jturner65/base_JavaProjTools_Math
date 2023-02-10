@@ -400,9 +400,11 @@ public class myPoint {
 	@Override
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (b instanceof myPoint v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
-		return false;			
-	}//equals
+		if (!(b instanceof myPoint)) return false;
+		myPoint v = (myPoint)b;
+		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
+	}				
+
 	
 	public String toStrCSV(){return toStrCSV("%.4f");}	
 	public String toStrCSV(String fmt){return "" + String.format(fmt,this.x) + ", " + String.format(fmt,this.y) + ", " + String.format(fmt,this.z);}	

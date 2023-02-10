@@ -422,8 +422,9 @@ public class myPointf {
 	 */
 	public boolean equals(Object b){
 		if (this == b) return true;
-		if (b instanceof myPointf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
-		return false;
+		if (!(b instanceof myPointf)) return false;
+		myPointf v = (myPointf)b;
+		return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));		
 	}
 	
 	public String toStrCSV(){return toStrCSV("%.4f");}	
