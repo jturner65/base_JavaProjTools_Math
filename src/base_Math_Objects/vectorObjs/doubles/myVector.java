@@ -1,17 +1,38 @@
 package base_Math_Objects.vectorObjs.doubles;
 
+import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 public class myVector extends myPoint{
 	public double sqMagn, magn;
 	
-	//vector constants available to all consumers of myVector
+	/**
+	 * zero vector
+	 */
 	public static final myVector ZEROVEC = new myVector(0,0,0);
-	//public static final myVector UP	=	new myVector(0,1,0);
-	//public static final myVector RIGHT = new myVector(1,0,0);
-	//public static final myVector FORWARD = new myVector(0,0,1);
+	/**
+	 * Up for Graphics framing (with z as depth, and y increasing downward)
+	 */
+	public static final myVector GRAPHICS_UP	=	new myVector(0,-1,0);
+	/**
+	 * Right for Graphics framing (with z as depth, and y increasing downward)
+	 */
+	public static final myVector GRAPHICS_RIGHT = new myVector(1,0,0);
+	/**
+	 * Forward for Graphics framing (with z as depth, and y increasing downward
+	 */
+	public static final myVector GRAPHICS_FORWARD = new myVector(0,0,1);
+	/**
+	 * Physics frame up as z
+	 */
 	public static final myVector UP	=	new myVector(0,0,1);
+	/**
+	 * Physics frame right as y
+	 */
 	public static final myVector RIGHT = new myVector(0,1,0);
+	/**
+	 * Physics frame forward as x
+	 */
 	public static final myVector FORWARD = new myVector(1,0,0);
 	
 	public myVector(double _x, double _y, double _z){super(_x,_y,_z); this._mag();}         //constructor 3 args  
@@ -107,34 +128,51 @@ public class myVector extends myPoint{
 	public double _dot(myVectorf b){return ((this.x * b.x) + (this.y * b.y) + (this.z * b.z));}																	//dot product
 	public static double _dot(myVector a, myVector b){		return a._dot(b);}
 
-	public static double _det3(myVector U, myVector V) {double udv = U._dot(V); return (Math.sqrt((U.sqMagn*V.sqMagn) - (udv*udv))); };                                // U|V det product
-	public static double _mixProd(myVector U, myVector V, myVector W) {return U._dot(myVector._cross(V,W)); };                                                 // U*(VxW)  mixed product, determinant - measures 6x the volume of the parallelapiped formed by myVectortors
-	public static boolean _isCW_Vecs(myVector U, myVector V, myVector W) {return _mixProd(U,V,W)>0; };                                               // U * (VxW)>0  U,V,W are clockwise
+	public static double _det3(myVector U, myVector V) {double udv = U._dot(V); return (Math.sqrt((U.sqMagn*V.sqMagn) - (udv*udv))); }                                // U|V det product
+	public static double _mixProd(myVector U, myVector V, myVector W) {return U._dot(myVector._cross(V,W)); }                                                 // U*(VxW)  mixed product, determinant - measures 6x the volume of the parallelapiped formed by myVectortors
+	public static boolean _isCW_Vecs(myVector U, myVector V, myVector W) {return _mixProd(U,V,W)>0; }                                               // U * (VxW)>0  U,V,W are clockwise
 	/**
 	 * area of triangle described by 3 points 
 	 * @param A, B, C Triangle verts
 	 * @return area of proscribed triangle
 	 */
-	public static double area(myPoint A, myPoint B, myPoint C) {	myVector x = new myVector(A,B), y = new myVector(A,C), z = x._cross(y); 	return z.magn/2.0; };                                               // area of triangle 
+	public static double area(myPoint A, myPoint B, myPoint C) {	myVector x = new myVector(A,B), y = new myVector(A,C), z = x._cross(y); 	return z.magn/2.0; }                                               // area of triangle 
 	/**
 	 * returns volume of tetrahedron defined by A,B,C,D
 	 * @param A,B,C,D verts of tet
 	 * @return volume
 	 */
-	public static double _volume(myPoint A, myPoint B, myPoint C, myPoint D) {return _mixProd(new myVector(A,B),new myVector(A,C),new myVector(A,D))/6.0; };                           // volume of tet 
+	public static double _volume(myPoint A, myPoint B, myPoint C, myPoint D) {return _mixProd(new myVector(A,B),new myVector(A,C),new myVector(A,D))/6.0; }                           // volume of tet 
 	/**
 	 *  returns true if tet is oriented so that A sees B, C, D clockwise
 	 * @param A,B,C,D verts of tet
 	 * @return if tet is oriented clockwise (A->B->C->D)
 	 */
-	public static boolean _isCW_Tet(myPoint A, myPoint B, myPoint C, myPoint D) {return _volume(A,B,C,D)>0; };                                     // tet is oriented so that A sees B, C, D clockwise 
+	public static boolean _isCW_Tet(myPoint A, myPoint B, myPoint C, myPoint D) {return _volume(A,B,C,D)>0; }                                     // tet is oriented so that A sees B, C, D clockwise 
 	/**
 	 * if passed vectors are parallel
 	 * @param U
 	 * @param V
 	 * @return
 	 */
-	public static boolean isParallel(myVector U, myVector V) {return U._cross(V).magn<U.magn*V.magn*0.00001; }                              // true if U and V are almost parallel
+	public static boolean isParallel(myVector U, myVector V) {return U._cross(V).magn<U.magn*V.magn*MyMathUtils.EPS; }                              // true if U and V are almost parallel
+	
+	/**
+	 * This will return a unit normal ortho to the plane spanned by U and V. If U and V are parallel, will provide a normal to U.
+	 * @param U 
+	 * @param V
+	 * @return
+	 */
+	public static myVector _findNormToPlane(myVector U, myVector V) {
+		myVector norm = V._cross(U);
+		if(norm.magn<U.magn*V.magn*MyMathUtils.EPS) {
+			//parallel, find normal to U and modified V 
+			//that will never be coincident no matter what V is
+			norm = myVector._cross(U.x, U.y, U.z, (V.x*2)+1, (V.y*3)+2, (V.z*4)+3);			
+		}
+		norm._normalize();
+		return norm;
+	}
 	
 	public static double _angleBetween(myVector v1, myVector v2) {
 		double 	_v1Mag = v1._mag(), 
@@ -172,7 +210,7 @@ public class myVector extends myPoint{
 //	}
 
 	
-	public static myVector _rotAroundAxis(myVector v1, myVector u){return _rotAroundAxis(v1, u, Math.PI*.5);}
+	public static myVector _rotAroundAxis(myVector v1, myVector u){return _rotAroundAxis(v1, u, MyMathUtils.HALF_PI);}
 	//rotate v1 around axis unit vector u, by give angle thet, around origin
 	public static myVector _rotAroundAxis(myVector v1, myVector u, double thet){		
 		double cThet = Math.cos(thet), sThet = Math.sin(thet), oneMC = 1-cThet,
