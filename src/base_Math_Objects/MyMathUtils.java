@@ -524,14 +524,14 @@ public class MyMathUtils {
 	 * @param x
 	 * @return
 	 */
-	public static int floor(float x){	return x>0 ? (int)x : (int)x-1;} 
+	public static int floor(float x){	return x>=0 ? (int)x : (int)x-1;} 
 	 
 	/**
 	 * Floor of passed double
 	 * @param x
 	 * @return
 	 */
-	public static int floor(double x){ return x>0 ? (int)x : (int)x-1;} 
+	public static int floor(double x){ return x>=0 ? (int)x : (int)x-1;} 
 	
 	/**
 	 * Return max of 2 ints
