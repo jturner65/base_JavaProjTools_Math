@@ -4,13 +4,13 @@ import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 /**
- * floating point matrix stack - use float based matrices for potential speedup/footprint
+ * floating point transformation matrix (4x4) stack - use float based matrices for potential speedup/footprint
  * @author John Turner
  *
  */
 public class myMatStackf {
 
-	public myMatrixf[] s;
+	private myMatrixf[] s;
 	public int top;
 	 
 	public myMatStackf(int matStackMaxHeight){
@@ -24,12 +24,12 @@ public class myMatStackf {
 	/**
 	 * add the current top of the matrix stack to the matrix stack in a higher position
 	 */
-	public void push(){ ++top; initStackLocation(top);  for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){  s[top].m[row][col] = s[top - 1].m[row][col]; }}}//push     	
+	public void push(){ ++top; initStackLocation(top);  for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){  s[top].setValByIdx(row,col, s[top-1].getValByIdx(row,col)); }}}//push     	
 	/**
 	 * replace the current top of the matrix stack with a new matrix
 	 * @param newTopMatrix
 	 */
-	public void replaceTop(myMatrixf newTopMatrix){for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){ s[top].m[row][col] = newTopMatrix.m[row][col]; }}}//replaceTop	
+	public void replaceTop(myMatrixf newTopMatrix){for (int row = 0; row < 4; ++row){ for (int col = 0; col < 4; ++col){ s[top].setValByIdx(row,col, newTopMatrix.getValByIdx(row,col)); }}}//replaceTop	
 	/**
 	 * return the top of the matrix stack without popping
 	 * @return

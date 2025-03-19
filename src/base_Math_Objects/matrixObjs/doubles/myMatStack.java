@@ -4,7 +4,7 @@ import base_Math_Objects.MyMathUtils;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 
 /**
- * Matrix stack structure, to mimic GL transformation stack
+ * Matrix stack structure, to mimic GL transformation stack, for transformation matrices
  * @author John Turner
  *
  */
@@ -26,9 +26,9 @@ public class myMatStack {
 	public void push(){ 
 		++top; 
 		initStackLocation(top);  
-		for (int row = 0; row < s[top].m.length; ++row){ 
-			for (int col = 0; col < s[top].m[row].length; ++col){  
-				s[top].m[row][col] = s[top - 1].m[row][col]; 
+		for (int row = 0; row < 4; ++row){ 
+			for (int col = 0; col < 4; ++col){  
+				s[top].setValByIdx(row,col, s[top-1].getValByIdx(row,col)); 
 			}
 		}
 	}//push     	
@@ -37,9 +37,9 @@ public class myMatStack {
 	 * @param newTopMatrix
 	 */
 	public void replaceTop(myMatrix newTopMatrix){
-		for (int row = 0; row < s[top].m.length; ++row){ 
-			for (int col = 0; col < s[top].m[row].length; ++col){  
-				s[top].m[row][col] = newTopMatrix.m[row][col]; 
+		for (int row = 0; row < 4; ++row){ 
+			for (int col = 0; col < 4; ++col){  
+				s[top].setValByIdx(row,col, newTopMatrix.getValByIdx(row,col));
 			}
 		}
 	}//replaceTop	
