@@ -4,7 +4,7 @@ import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 public class myMatrixf {
-	public float[][] m;
+	private float[][] m;
 	
 	public myMatrixf(){  m = new float[4][4]; initMat();}
 	public myMatrixf(float[][] _m) {
@@ -57,7 +57,7 @@ public class myMatrixf {
 	 */
 	public float[] multVert(float[] b){
 		float resultVal;
-		float[] result = new float[]{0,0,0,0};
+		float[] result = new float[b.length];
 		for (int row = 0; row < this.m.length; ++row){
 			resultVal = 0;
 			for (int col = 0; col < this.m[row].length; ++col){resultVal += this.m[row][col] * b[col];}	
@@ -143,7 +143,7 @@ public class myMatrixf {
 	}
 	
 	/**
-	 * Return the Ajoint of the passed matrix of floats - the transpose of the cofactor matrix
+	 * Return the Adjoint of the passed matrix of floats - the transpose of the cofactor matrix
 	 * @param M
 	 * @return
 	 */

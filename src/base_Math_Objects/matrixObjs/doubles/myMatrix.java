@@ -4,7 +4,7 @@ import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.doubles.myVector;
 
 public class myMatrix {	  
-	public double[][] m;
+	private double[][] m;
 		
 	public myMatrix(){  m = new double[4][4]; initMat();}
 	public myMatrix(double[][] _m) {
