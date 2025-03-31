@@ -51,7 +51,7 @@ public abstract class Base_Interpolant {
 		isStopped = false;
 	}
 	
-	public final void setAnimBehavior(int _idx) {animBehavior = InterpolantBehavior.getVal(_idx);}
+	public final void setAnimBehavior(int _idx) {animBehavior = InterpolantBehavior.getEnumByIndex(_idx);}
 	
 	public final void setValue(float _t) {
 		raw_t=(_t<0 ? 0 : _t>1.0f ? 1.0f : _t);

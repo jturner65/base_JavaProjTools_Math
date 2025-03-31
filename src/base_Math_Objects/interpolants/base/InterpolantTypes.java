@@ -10,8 +10,7 @@ import java.util.Map;
  *
  */
 public enum InterpolantTypes {	
-	linear(0), smoothVelocity(1), smoothAccel(2), sine(3);
-	private int value; 
+	linear, smoothVelocity, smoothAccel, sine;
 	private static final String[] 
 			_typeExplanation = new String[] {"Linear","Cubic (Continuous Velocity)","Quintic (Continuous Accel)","Sine"};
 	private static final String[] 
@@ -22,20 +21,19 @@ public enum InterpolantTypes {
 	
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, InterpolantTypes> map = new HashMap<Integer, InterpolantTypes>(); 
-		static { for (InterpolantTypes enumV : InterpolantTypes.values()) { map.put(enumV.value, enumV);}}
-	private InterpolantTypes(int _val){value = _val;} 
-	public int getVal(){return value;}
+		static { for (InterpolantTypes enumV : InterpolantTypes.values()) { map.put(enumV.ordinal(), enumV);}}
+	public int getVal(){return ordinal();}
 	public static InterpolantTypes getVal(int idx){return map.get(idx);}
 	public static int getNumVals(){return map.size();}						//get # of values in enum
-	public String getName() {return _typeName[value];}
-	public String getBrfName() {return _typeBrfName[value];}
-	public String getExplanation() {return _typeExplanation[value];}
+	public String getName() {return _typeName[ordinal()];}
+	public String getBrfName() {return _typeBrfName[ordinal()];}
+	public String getExplanation() {return _typeExplanation[ordinal()];}
 	public static String getNameByVal(int _val) {return _typeName[_val];}
 	public static String getBrfNameByVal(int _val) {return _typeBrfName[_val];}
 	public static String getExplanationByVal(int _val) {return _typeExplanation[_val];}
 	@Override
-    public String toString() { return ""+this.name()+":"+_typeExplanation[value]; }	
-    public String toStrBrf() { return ""+_typeExplanation[value]; }	
+    public String toString() { return ""+this.name()+":"+_typeExplanation[ordinal()]; }	
+    public String toStrBrf() { return ""+_typeExplanation[ordinal()]; }	
 
 }
 
