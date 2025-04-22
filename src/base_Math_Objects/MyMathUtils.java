@@ -193,8 +193,7 @@ public class MyMathUtils {
 	 * @return axis-angle representation of orientation
 	 */
 	public static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
-		float rt2 = .5f*SQRT_2_F;
-		float angle,x=rt2,y=rt2,z=rt2,s;
+		float angle,s,x=INV_SQRT_2_F,y=INV_SQRT_2_F,z=INV_SQRT_2_F;
 		float fyrx = -orientation[O_FWD].y+orientation[O_RHT].x,
 			uxfz = -orientation[O_UP].x+orientation[O_FWD].z,
 			rzuy = -orientation[O_RHT].z+orientation[O_UP].y;
