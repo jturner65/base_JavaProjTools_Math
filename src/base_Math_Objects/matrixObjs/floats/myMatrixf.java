@@ -168,7 +168,7 @@ public class myMatrixf {
 	 * @return
 	 */
 	public synchronized static float[][] TransposeMatrix(float[][] M){
-		float[][] res = new float[M.length][M[0].length];
+		float[][] res = new float[M[0].length][M.length];
 		for(int row=0;row<M.length;++row) {
 			for(int col=0;col<M[0].length;++col) {
 				res[col][row] = M[row][col];
@@ -188,7 +188,9 @@ public class myMatrixf {
 	}
 	
 	/**
-	 * Returns the cofactor matrix of the passed float matrix
+	 * Returns the cofactor matrix of the passed float matrix : 
+	 * 		Each value M[i][j] is replaced by the determinant of M with 
+	 * 		row i and column j removed, multiplied by -1 raised to the (i + j)th power.
 	 * @param M
 	 * @return
 	 */

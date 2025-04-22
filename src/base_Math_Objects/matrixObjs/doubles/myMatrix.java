@@ -189,7 +189,7 @@ public class myMatrix {
 	 * @return
 	 */
 	public synchronized static double[][] TransposeMatrix(double[][] M){
-		double[][] res = new double[M.length][M[0].length];
+		double[][] res = new double[M[0].length][M.length];
 		for(int row=0;row<M.length;++row) {
 			for(int col=0;col<M[0].length;++col) {
 				res[col][row] = M[row][col];
@@ -209,7 +209,9 @@ public class myMatrix {
 	}
 	
 	/**
-	 * Returns the cofactor matrix of the passed float matrix - find determinant of every minor
+	 * Returns the cofactor matrix of the passed float matrix : 
+	 * 		Each value M[i][j] is replaced by the determinant of M with 
+	 * 		row i and column j removed, multiplied by -1 raised to the (i + j)th power.
 	 * @param M
 	 * @return
 	 */
