@@ -189,7 +189,7 @@ public class myMatrix {
 	 * @return
 	 */
 	public synchronized static double[][] TransposeMatrix(double[][] M){
-		double[][] res = new double[M.length][M[0].length];
+		double[][] res = new double[M[0].length][M.length];
 		for(int row=0;row<M.length;++row) {
 			for(int col=0;col<M[0].length;++col) {
 				res[col][row] = M[row][col];
