@@ -36,7 +36,16 @@ public class myVector extends myPoint{
 	public static final myVector FORWARD = new myVector(1,0,0);
 	
 	public myVector(double _x, double _y, double _z){super(_x,_y,_z); this._mag();}         //constructor 3 args  
-	public myVector(double [] v){super(v[0],v[1],v[2]);this._mag();} 
+	/**
+	 * Build a vector using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myVector(float[] vals){super(vals);this._mag();}	
+	/**
+	 * Build a vector using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myVector(double [] vals){super(vals);this._mag();} 
 	public myVector(myVector p){super(p.x, p.y, p.z); this.magn=p.magn; this.sqMagn=p.sqMagn; }                                                                                                           	//copy constructor  
 	public myVector(myVectorf p){super(p.x, p.y, p.z); this.magn=p.magn; this.sqMagn=p.sqMagn; }                                                                                                           	//copy constructor  
 	public myVector(){ }//this(0,0,0);}                                                                                                                               //constructor 0 args

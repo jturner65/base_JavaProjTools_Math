@@ -26,7 +26,19 @@ public class myPoint {
 	 * @param _y : y coord
 	 * @param _z : z coord
 	 */
-	public myPoint(double _x, double _y, double _z){this.x = _x; this.y = _y; this.z = _z;}         //constructor 3 args  
+	public myPoint(double _x, double _y, double _z){this.x = _x; this.y = _y; this.z = _z;}         //constructor 3 args
+	
+	/**
+	 * Build a point using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myPoint(float[] vals){this.x = vals[0]; this.y = vals[1]; this.z = vals[2];} 
+	
+	/**
+	 * Build a point using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myPoint(double[] vals){this.x = vals[0]; this.y = vals[1]; this.z = vals[2];} 
 	/**
 	 * copy constructor
 	 * @param p : point object to copy

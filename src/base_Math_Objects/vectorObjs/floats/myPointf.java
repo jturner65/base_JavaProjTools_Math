@@ -35,6 +35,16 @@ public class myPointf {
 	 */
 	public myPointf(double _x, double _y, double _z){this.x = (float) _x; this.y = (float) _y; this.z = (float) _z;}         //constructor 3 args  
 	/**
+	 * Build a point using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myPointf(float[] vals){this.x = vals[0]; this.y = vals[1]; this.z = vals[2];}	
+	/**
+	 * Build a point using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myPointf(double[] vals){this.x = (float)vals[0]; this.y = (float)vals[1]; this.z = (float)vals[2];} 
+	/**
 	 * copy constructor
 	 * @param p : point object to copy
 	 */

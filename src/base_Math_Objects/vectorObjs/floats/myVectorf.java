@@ -40,7 +40,20 @@ public class myVectorf extends myPointf{
 	public static final myVectorf FORWARD = new myVectorf(1,0,0);
 	
 	public myVectorf(float _x, float _y, float _z){super(_x,_y,_z); this._mag();}         //constructor 3 args  
-	public myVectorf(double _x, double _y, double _z){this((float)_x,(float)_y,(float)_z); }         //constructor with doubles
+	public myVectorf(double _x, double _y, double _z){super((float)_x,(float)_y,(float)_z); this._mag();}         //constructor with doubles
+	
+	/**
+	 * Build a vector using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myVectorf(float[] vals){super(vals);this._mag();}	
+	/**
+	 * Build a vector using the first 3 values in the passed array. Will fail if less than 3 values.
+	 * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
+	 */
+	public myVectorf(double[] vals){super(vals);this._mag();} 
+	
+	
 	public myVectorf(myVectorf p){super(p.x, p.y, p.z); this.magn = p.magn;this.sqMagn = p.sqMagn;}                                                                                                           	//constructor 1 arg  
 	public myVectorf(myVector p){super((float)p.x, (float)p.y, (float)p.z); this.magn = (float) p.magn;this.sqMagn = (float) p.sqMagn;}                                                                                                           	//constructor 1 arg  
 	public myVectorf(){ }//this(0,0,0);}                                                                                                                               //constructor 0 args
