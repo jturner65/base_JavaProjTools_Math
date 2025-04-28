@@ -239,7 +239,7 @@ public class MyMathUtils {
 	 * @param A, B, C verts of triangle
 	 * @return
 	 */
-	public myVector normToPlane(myPoint A, myPoint B, myPoint C) {
+	public static myVector normToPlane(myPoint A, myPoint B, myPoint C) {
 		return myVector._cross(new myVector(A,B),new myVector(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 	
@@ -248,7 +248,7 @@ public class MyMathUtils {
 	 * @param A, B, C verts of triangle
 	 * @return
 	 */
-	public myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
+	public static myVectorf normToPlane(myPointf A, myPointf B, myPointf C) {
 		return myVectorf._cross(new myVectorf(A,B),new myVectorf(A,C)); 
 	};   // normal to triangle (A,B,C), not normalized (proportional to area)
 	
