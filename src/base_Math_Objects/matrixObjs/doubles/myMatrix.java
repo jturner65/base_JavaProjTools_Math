@@ -7,12 +7,34 @@ public class myMatrix {
 	private double[][] m;
 		
 	public myMatrix(){  m = new double[4][4]; initMat();}
+	
+	/**
+	 * Matrix constructor from array of values - expects size of array 
+	 * to be perfect square. Matrix dims will be sqrt of array size in rows and columns
+	 * @param _m array of values, with each row's values grouped together (row major)
+	 */
+	public myMatrix(double[] _m) {
+		//Size of _m is #row x #col - assumes square
+		int numPerDim = (int) Math.sqrt(_m.length);
+		m = new double[numPerDim][numPerDim];
+		for(int row=0;row<numPerDim;++row) {
+			System.arraycopy(_m, row*numPerDim, m[row], 0, numPerDim);
+		}
+	}
+	
 	public myMatrix(double[][] _m) {
 		m = new double[_m.length][_m[0].length];
 		for(int row=0;row<m.length;++row) {
-			for(int col=0;col<m[row].length;++col) {m[row][col]=_m[row][col];}	
+			System.arraycopy(_m[row], 0, m[row], 0, m[row].length);
 		}
 	}
+	
+	/**
+	 * Copy ctor
+	 * @param b
+	 */
+	public myMatrix(myMatrix b) {	this(b.m);	}
+	
 	public void initMat(){  this.initMat(true);}	
 	/**
 	 * initialize this matrix to be identity matrix or all zeros
@@ -323,7 +345,10 @@ public class myMatrix {
 	 */
 	public myMatrix clone(){
 		myMatrix newMat = new myMatrix();
-		for (int row = 0; row < this.m.length; ++row){ for (int col = 0; col < this.m[row].length; ++col){newMat.m[row][col] = this.m[row][col];}}
+		for (int row = 0; row < this.m.length; ++row){
+			System.arraycopy(newMat.m[row], 0, m[row], 0, m[row].length);
+			//for (int col = 0; col < this.m[row].length; ++col){newMat.m[row][col] = this.m[row][col];}
+		}		
 		return newMat;
 	}
 	

@@ -7,12 +7,34 @@ public class myMatrixf {
 	private float[][] m;
 	
 	public myMatrixf(){  m = new float[4][4]; initMat();}
+	
+	/**
+	 * Matrix constructor from array of values - expects size of array 
+	 * to be perfect square. Matrix dims will be sqrt of array size in rows and columns
+	 * @param _m array of values, with each row's values grouped together (row major)
+	 */
+	public myMatrixf(float[] _m) {
+		//Size of _m is #row x #col - assumes square
+		int numPerDim = (int) Math.sqrt(_m.length);
+		m = new float[numPerDim][numPerDim];
+		for(int row=0;row<numPerDim;++row) {
+			System.arraycopy(_m, row*numPerDim, m[row], 0, numPerDim);
+		}
+	}	
+	
 	public myMatrixf(float[][] _m) {
 		m = new float[_m.length][_m[0].length];
 		for(int row=0;row<m.length;++row) {
-			for(int col=0;col<m[row].length;++col) {m[row][col]=_m[row][col];}	
+			System.arraycopy(_m[row], 0, m[row], 0, m[row].length);
 		}
 	}
+	
+	/**
+	 * Copy ctor
+	 * @param b
+	 */
+	public myMatrixf(myMatrixf b) {	this(b.m);	}
+	
 	public void initMat(){  this.initMat(true);}	
 	/**
 	 * initialize this matrix to be identity matrix or all zeros
@@ -40,9 +62,9 @@ public class myMatrixf {
 		for (int row = 0; row < this.m.length; ++row){
 			for (int col = 0; col < this.m[row].length; ++col){
 				for (int k = 0; k < b.m.length; k++){
-					resultVal += this.m[row][k] * b.getValByIdx(k,col);
+					resultVal += this.m[row][k] * b.m[k][col];
 				}
-				result.setValByIdx(row,col,resultVal); 
+				result.m[row][col] = resultVal; 
 				resultVal = 0;
 			}
 		}
@@ -296,7 +318,10 @@ public class myMatrixf {
 	//makes a deep copy of this matrix, which it returns
 	public myMatrixf clone(){
 		myMatrixf newMat = new myMatrixf();
-		for (int row = 0; row < this.m.length; ++row){ for (int col = 0; col < this.m[row].length; ++col){newMat.m[row][col] = this.m[row][col];}}
+		for (int row = 0; row < this.m.length; ++row){
+			System.arraycopy(newMat.m[row], 0, m[row], 0, m[row].length);
+			//for (int col = 0; col < this.m[row].length; ++col){newMat.m[row][col] = this.m[row][col];}
+		}
 		return newMat;
 	}
 	
