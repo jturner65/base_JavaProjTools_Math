@@ -1513,6 +1513,27 @@ public class MyMathUtils {
 		pos._add(ctr);
 		return pos;
 	}
+	/**
+	 * Find a random position on a sphere's surface centered at 0 of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @return
+	 */
+	public static myPoint getRandPosOnSphereDouble(double rad){ return getRandPosOnSphereDouble(rad, new myPoint());}
+	/**
+	 * Find a random position on a sphere's surface centered at ctr of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @param ctr
+	 * @return
+	 */
+	public static myPoint getRandPosOnSphereDouble(double rad, myPoint ctr){
+		myPoint pos = new myPoint();
+		double 	cosTheta = randomDouble(-1,1),
+				phi = randomDouble(0,TWO_PI_F), 
+				rSinTheta = rad* (Math.sqrt(1.0 - (cosTheta * cosTheta)));
+		pos.set(rSinTheta * Math.cos(phi), rSinTheta * Math.sin(phi),cosTheta * rad);
+		pos._add(ctr);
+		return pos;
+	}
 	/** 
 	 * convert from spherical coords to cartesian. Returns Array :
 	 * 	idx0 : norm of vector through point from origin
