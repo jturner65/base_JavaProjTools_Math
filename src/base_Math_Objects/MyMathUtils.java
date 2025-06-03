@@ -3,6 +3,8 @@ package base_Math_Objects;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import base_Math_Objects.vectorObjs.doubles.myPoint;
 import base_Math_Objects.vectorObjs.floats.myPointf;
@@ -18,7 +20,8 @@ public class MyMathUtils {
 	/**
 	 * Useful double constants
 	 */
-	public static final double 
+	public static double
+		THIRD = 1.0/3.0,
 		PI = Math.PI,
 		QUARTER_PI = .25*PI,
 		HALF_PI = .5*PI,
@@ -38,7 +41,8 @@ public class MyMathUtils {
 	/**
 	 * Useful float constants
 	 */
-	public static final float 
+	public static float 
+		THIRD_F = 1.0f/3.0f,
 		PI_F = (float)PI,
 		QUARTER_PI_F = (float)QUARTER_PI,
 		HALF_PI_F = (float) HALF_PI,
@@ -57,33 +61,33 @@ public class MyMathUtils {
 	
 
     // numbers greater than 10^MAX_DIGITS_10 or e^MAX_DIGITS_EXP are considered unsafe ('too big') for floating point operations
-    protected static final int MAX_DIGITS_EXP = 677;
-    protected static final int MAX_DIGITS_10 = 294; // ~ MAX_DIGITS_EXP/LN(10)
-    protected static final int MAX_DIGITS_2 = 977; // ~ MAX_DIGITS_EXP/LN(2)
+    protected static int MAX_DIGITS_EXP = 677;
+    protected static int MAX_DIGITS_10 = 294; // ~ MAX_DIGITS_EXP/LN(10)
+    protected static int MAX_DIGITS_2 = 977; // ~ MAX_DIGITS_EXP/LN(2)
         
     /**
      * # of pre-computed cosine and sine values.  
      */
-    public static final float numTrigVals = 36.0f;
+    public static float numTrigVals = 36.0f;
     /**
      * Pre-computed array of {@value #numTrigVals} cosine values 0->2pi
      */
-    public static final double[] preCalcCosVals;
+    public static double[] preCalcCosVals;
     /**
      * Pre-computed array of {@value #numTrigVals} sine values 0->2pi
      */
-    public static final double[] preCalcSinVals;
+    public static double[] preCalcSinVals;
     
-    private static final float deltaThet = TWO_PI_F/numTrigVals,
+    private static float deltaThet = TWO_PI_F/numTrigVals,
 			finalThet = TWO_PI_F+deltaThet;
     /**
      * Pre-computed array of {@value #numTrigVals} float cosine values 0->2pi
      */
-    public static final float[] preCalcCosVals_f;
+    public static float[] preCalcCosVals_f;
     /**
      * Pre-computed array of {@value #numTrigVals} float sine values 0->2pi
      */
-    public static final float[] preCalcSinVals_f;
+    public static float[] preCalcSinVals_f;
     
     /**
      * Build arrays of precomputed sine and cosine values
@@ -183,7 +187,7 @@ public class MyMathUtils {
 		return BP._dot(BA)>0 ; 						//if not greater than 0 than won't project onto AB - past B away from segment
 	}
 	
-	//public static final int O_FWD = 0, O_RHT = 1,  O_UP = 2;
+	//public static int O_FWD = 0, O_RHT = 1,  O_UP = 2;
 	/**
 	 * build axis angle orientation from passed orientation matrix
 	 * @param orientation array of 3 vectors corresponding to orientation vectors
@@ -970,5 +974,577 @@ public class MyMathUtils {
 		return true;
 	}
      
+	
+	/**
+	 * point normal form of plane - give a normal and a point and receive a 4-element array of the coefficients of the plane equation.
+	 * @param _n unit normal of plane
+	 * @param _p point on plane
+	 * @return eq : coefficients of the plane equation in the form eq[0]*x + eq[1]*y + eq[2]*z + eq[3] = 0
+	 */
+	public static float[] getPlanarEqFromPointAndNorm(myVector _n, myPoint _p) {
+		return new float[] { (float)_n.x,(float) _n.y, (float)_n.z, (float) (_n.x * -_p.x + _n.y * -_p.y + _n.z * -_p.z)};
+	}
+	
+
+	/**
+	 * point normal form of plane - give a normal and a point and receive a 4-element array of the coefficients of the plane equation.
+	 * @param _n unit normal of plane
+	 * @param _p point on plane
+	 * @return eq : coefficients of the plane equation in the form eq[0]*x + eq[1]*y + eq[2]*z + eq[3] = 0
+	 */
+	public static float[] getPlanarEqFromPointAndNorm(myVectorf _n, myPointf _p) {
+		return new float[] { _n.x, _n.y, _n.z, (_n.x * -_p.x + _n.y * -_p.y + _n.z * -_p.z)};
+	}	
+	
+
+	/**
+	 * build a frame based on passed normal given two passed points
+	 * @param A
+	 * @param B
+	 * @param I normal to build frame around
+	 * @return vec array of {AB, Normal, Tangent}
+	 */
+	public static myVector[] buildFrameAroundNormal(myPoint A, myPoint B, myVector C) {
+		myVector V = new myVector(A,B);
+		myVector norm = myVector._findNormToPlane(C,V);		
+		myVector tan = norm._cross(V)._normalize(); 
+		return new myVector[] {V,norm,tan};		
+	}
+	
+	/**
+	 * build a frame based on passed normal given two passed points
+	 * @param A
+	 * @param B
+	 * @param I normal to build frame around
+	 * @return vec array of {AB, Normal, Tangent}
+	 */
+	public static myVectorf[] buildFrameAroundNormal(myPointf A, myPointf B, myVectorf C) {
+		myVectorf V = new myVectorf(A,B);
+		myVectorf norm = myVectorf._findNormToPlane(C,V);
+		myVectorf tan = norm._cross(V)._normalize(); 
+		return new myVectorf[] {V,norm,tan};		
+	}
+	
+	/**
+	 * Derive the points of a cylinder of radius r around axis through A and B
+	 * @param A center point of endcap
+	 * @param B center point of endcap
+	 * @param r desired radius of cylinder
+	 * @return array of points for cylinder
+	 */
+	public static myPoint[] buildCylVerts(myPoint A, myPoint B, double r, myVector norm) {
+		myVector[] frame = buildFrameAroundNormal(A, B, norm);
+		myPoint[] resList = new myPoint[2 * preCalcCosVals.length];
+		double rca, rsa;
+		int idx = 0;
+		for(int i = 0; i<preCalcCosVals.length; ++i) {
+			rca = r*preCalcCosVals[i];
+			rsa = r*preCalcCosVals[i];
+			resList[idx++] = myPoint._add(A,rca,frame[1],rsa,frame[2]); 
+			resList[idx++] = myPoint._add(A,rca,frame[1],rsa,frame[2],1,frame[0]);				
+		}
+		return resList;
+	}//build list of all cylinder vertices 
+	
+	/**
+	 * Derive the points of a cylinder of radius r around axis through A and B
+	 * @param A center point of endcap
+	 * @param B center point of endcap
+	 * @param r desired radius of cylinder
+	 * @return array of points for cylinder
+	 */
+	public static myPointf[] buildCylVerts(myPointf A, myPointf B, float r, myVectorf norm) {
+		myVectorf[] frame = buildFrameAroundNormal(A, B, norm);
+		myPointf[] resList = new myPointf[2 * preCalcCosVals.length];
+		float rca, rsa;
+		int idx = 0;
+		for(int i = 0; i<preCalcCosVals.length; ++i) {
+			rca = r*preCalcCosVals_f[i];
+			rsa = r*preCalcSinVals_f[i];
+			resList[idx++] = myPointf._add(A,rca,frame[1],rsa,frame[2]); 
+			resList[idx++] = myPointf._add(A,rca,frame[1],rsa,frame[2],1,frame[0]);				
+		}	
+		return resList;
+	}//build list of all cylinder vertices 
+	
+	/**
+	 * Build a set of n points inscribed on a circle centered at p in plane I,J
+	 * @param p center point
+	 * @param r circle radius
+	 * @param I, J axes of plane
+	 * @param n # of points
+	 * @return array of n equal-arc-length points centered around p
+	 */
+	public static myPoint[] buildCircleInscribedPoints(myPoint p, double r, myVector I, myVector J, int n) {
+		myPoint[] pts = new myPoint[n];
+		pts[0] = new myPoint(p,r,myVector._unit(I));
+		double a = (TWO_PI)/(1.0*n); 
+		for(int i=1;i<n;++i){pts[i] = pts[i-1].rotMeAroundPt(a,J,I,p);}
+		return pts;
+	}
+	/**
+	 * Build a set of n points inscribed on a circle centered at p in plane I,J
+	 * @param p center point
+	 * @param r circle radius
+	 * @param I, J axes of plane
+	 * @param n # of points
+	 * @return array of n equal-arc-length points centered around p
+	 */
+	public static myPointf[] buildCircleInscribedPoints(myPointf p, float r, myVectorf I, myVectorf J, int n) {
+		myPointf[] pts = new myPointf[n];
+		pts[0] = new myPointf(p,r,myVectorf._unit(I));
+		float a = (TWO_PI_F)/(1.0f*n);
+		for(int i=1;i<n;++i){pts[i] = pts[i-1].rotMeAroundPt(a,J,I,p);}
+		return pts;
+	}
+	
+	
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param t
+	 * @return
+	 */
+	public static myPoint PtOnSpiral(myPoint A, myPoint B, myPoint C, double t) {
+		//center is coplanar to A and B, and coplanar to B and C, but not necessarily coplanar to A, B and C
+		//so center will be coplanar to mp(A,B) and mp(B,C) - use mpCA midpoint to determine plane mpAB-mpBC plane?
+		myPoint mAB = new myPoint(A,.5, B), mBC = new myPoint(B,.5, C), mCA = new myPoint(C,.5, A);
+		myVector mI = myVector._unit(mCA,mAB), mTmp = myVector._cross(mI,myVector._unit(mCA,mBC)), mJ = myVector._unit(mTmp._cross(mI));	//I and J are orthonormal
+		double a =spiralAngle(A,B,B,C), s =spiralScale(A,B,B,C);
+		
+		//myPoint G = spiralCenter(a, s, A, B, mI, mJ); 
+		myPoint G = spiralCenter(A, mAB, B, mBC); 
+		//return new myPoint(G, Math.pow(s,t), R(A,t*a,mI,mJ,G));
+		return new myPoint(G, Math.pow(s,t), A.rotMeAroundPt(t*a,mI,mJ,G));
+	}	
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static double spiralAngle(myPoint A, myPoint B, myPoint C, myPoint D) {return myVector._angleBetween(new myVector(A,B),new myVector(C,D));}
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static double spiralScale(myPoint A, myPoint B, myPoint C, myPoint D) {return myPoint._dist(C,D)/ myPoint._dist(A,B);}
+
+	/**
+	 * spiral given 4 points, AB and CD are edges corresponding through rotation
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static myPoint spiralCenter(myPoint A, myPoint B, myPoint C, myPoint D) {         // new spiral center
+		myVector AB=new myVector(A,B), CD=new myVector(C,D), AC=new myVector(A,C);
+		double m=CD.magn/AB.magn, n=CD.magn*AB.magn;		
+		myVector rotAxis = myVector._unit(AB._cross(CD));		//expect ab and ac to be coplanar - this is the axis to rotate around to find flock
+		
+		myVector rAB = myVector._rotAroundAxis(AB, rotAxis, HALF_PI_F);
+		double c=AB._dot(CD)/n,	s=rAB._dot(CD)/n;
+		double AB2 = AB._dot(AB), a=AB._dot(AC)/AB2, b=rAB._dot(AC)/AB2, x=(a-m*( a*c+b*s)), y=(b-m*(-a*s+b*c)), d=1+m*(m-2*c);  if((c!=1)&&(m!=1)) { x/=d; y/=d; };
+		return new myPoint(new myPoint(A,x,AB),y,rAB);
+	}
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param t
+	 * @return
+	 */
+	public static myPointf PtOnSpiral(myPointf A, myPointf B, myPointf C, float t) {
+		//center is coplanar to A and B, and coplanar to B and C, but not necessarily coplanar to A, B and C
+		//so center will be coplanar to mp(A,B) and mp(B,C) - use mpCA midpoint to determine plane mpAB-mpBC plane?
+		myPointf mAB = new myPointf(A,.5f, B), mBC = new myPointf(B,.5f, C), mCA = new myPointf(C,.5f, A);
+		myVectorf mI = myVectorf._unit(mCA,mAB), mTmp = myVectorf._cross(mI,myVectorf._unit(mCA,mBC)), mJ = myVectorf._unit(mTmp._cross(mI));	//I and J are orthonormal
+		float a =spiralAngle(A,B,B,C), s =spiralScale(A,B,B,C);
+		
+		//myPoint G = spiralCenter(a, s, A, B, mI, mJ); 
+		myPointf G = spiralCenter(A, mAB, B, mBC); 
+		return new myPointf(G, (float)Math.pow(s,t), A.rotMeAroundPt(t*a,mI,mJ,G));
+	}	
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static float spiralAngle(myPointf A, myPointf B, myPointf C, myPointf D) {return myVectorf._angleBetween(new myVectorf(A,B),new myVectorf(C,D));}
+	/**
+	 * 
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static float spiralScale(myPointf A, myPointf B, myPointf C, myPointf D) {return myPointf._dist(C,D)/ myPointf._dist(A,B);}
+	
+	/**
+	 * spiral given 4 points, AB and CD are edges corresponding through rotation
+	 * @param A
+	 * @param B
+	 * @param C
+	 * @param D
+	 * @return
+	 */
+	public static myPointf spiralCenter(myPointf A, myPointf B, myPointf C, myPointf D) {         // new spiral center
+		myVectorf AB=new myVectorf(A,B), CD=new myVectorf(C,D), AC=new myVectorf(A,C);
+		float m=CD.magn/AB.magn, n=CD.magn*AB.magn;		
+		myVectorf rotAxis = myVectorf._unit(AB._cross(CD));		//expect ab and ac to be coplanar - this is the axis to rotate around to find flock
+		
+		myVectorf rAB = myVectorf._rotAroundAxis(AB, rotAxis, HALF_PI_F);
+		float c=AB._dot(CD)/n,	s=rAB._dot(CD)/n;
+		float AB2 = AB._dot(AB), a=AB._dot(AC)/AB2, b=rAB._dot(AC)/AB2, x=(a-m*( a*c+b*s)), y=(b-m*(-a*s+b*c)), d=1+m*(m-2*c);  if((c!=1)&&(m!=1)) { x/=d; y/=d; };
+		return new myPointf(new myPointf(A,x,AB),y,rAB);
+	}
+
+	/**
+	 * Return intersection point in plane described by ABC of vector T through point E
+	 * @param E point within cast vector/ray
+	 * @param T directional vector/ray
+	 * @param A point describing plane
+	 * @param B point describing plane
+	 * @param C point describing plane
+	 * @return
+	 */
+	public static myPoint intersectPlane(myPoint E, myVectorf T, myPointf A, myPointf B, myPointf C) {
+		myPointf res = intersectPlane(new myPointf(E.x, E.y, E.z), T, A, B, C);
+		return new myPoint(res.x, res.y, res.z);
+	}//intersectPlane
+	/**
+	 * Return intersection point in plane described by ABC of vector T through point E
+	 * @param E point within cast vector/ray
+	 * @param T directional vector/ray
+	 * @param A point describing plane
+	 * @param B point describing plane
+	 * @param C point describing plane
+	 * @return
+	 */
+	public static myPointf intersectPlane(myPointf E, myVectorf T, myPointf A, myPointf B, myPointf C) {
+		//vector through point and planar point
+		myVectorf EA=new myVectorf(E,A); 
+		//planar vectors
+		myVectorf AB=new myVectorf(A,B), AC=new myVectorf(A,C);
+		//find planar norm
+		myVectorf ACB = AC._cross(AB);
+		//project 
+		float t = (EA._dot(ACB) / T._dot(ACB));		
+		return (myPointf._add(E,t,T));		
+	}//intersectPlane
+	/**
+	 * Return intersection point in plane described by ABC of vector T through point E
+	 * @param E point within cast vector/ray
+	 * @param T directional vector/ray
+	 * @param A point describing plane
+	 * @param B point describing plane
+	 * @param C point describing plane
+	 * @return
+	 */
+	public static myPoint intersectPlane(myPoint E, myVector T, myPoint A, myPoint B, myPoint C) {
+		//vector through point and planar point
+		myVector EA=new myVector(E,A); 
+		//planar vectors
+		myVector AB=new myVector(A,B), AC=new myVector(A,C);
+		//find planar norm
+		myVector ACB = AC._cross(AB);
+		//project 
+		double t = (EA._dot(ACB) / T._dot(ACB));		
+		return (myPoint._add(E,t,T));		
+	}//intersectPlane		
+	/**
+	 * if ray from E along V intersects sphere at C with radius r, return t when intersection occurs
+	 * @param E
+	 * @param V
+	 * @param C
+	 * @param r
+	 * @return t value along vector V where first intersection occurs
+	 */
+	public static double intersectPt(myPoint E, myVector V, myPoint C, double r) { 
+		myVector Vce = new myVector(C,E);
+		double ta = 2 * V._dot(V),
+				b = 2 * V._dot(Vce), 
+				c = Vce._dot(Vce) - (r*r),
+				radical = (b*b) - 2 *(ta) * c;		//b^2 - 4ac
+		if(radical < 0) return -1;
+		double sqrtRad = Math.sqrt(radical);
+		double t1 = (b + sqrtRad)/ta, t2 = (b - sqrtRad)/ta;
+		if (t1 < t2) {return t1 > 0 ? t1 : t2;}	
+		return t2 > 0 ? t2 : t1;	
+		//return ((t1 > 0) && (t2 > 0) ? min(t1, t2) : ((t1 < 0 ) ? ((t2 < 0 ) ?-1 : t2) : t1) );
+	}	
+	
+	////////////////////////////////////////////
+	/// Synchronized Random functions
+	/**
+	 * Get random next double between 0.0 (inclusive) and 1.0 (exclusive). Synchronized.
+	 * @return
+	 */
+	public static synchronized double randomDouble() {return ThreadLocalRandom.current().nextDouble();}	
+
+	/**
+	 * Get random next double between 0 and @param high. Synchronized.
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized double randomDouble(double high) {return ThreadLocalRandom.current().nextDouble(high);}	
+
+	/**
+	 * Get random next double between @param low and @param high. Synchronized.
+	 * @param low lower, inclusive, bound for random draw
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized double randomDouble(double low, double high) {return ThreadLocalRandom.current().nextDouble(low, high);}
+
+	/**
+	 * Get random next float between 0.0f (inclusive) and 1.0f (exclusive). Synchronized.
+	 * @return
+	 */
+	public static synchronized float randomFloat() {return ThreadLocalRandom.current().nextFloat();}
+
+	/**
+	 * Get random next float between 0 and @param high. Synchronized.
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized float randomFloat(float high) {return ThreadLocalRandom.current().nextFloat(high);}
+
+	/**
+	 * Get random next float between @param low and @param high. Synchronized.
+	 * @param low lower, inclusive, bound for random draw
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized float randomFloat(float low, float high) {return ThreadLocalRandom.current().nextFloat(low, high);}
+	
+	/**
+	 * Get random next int between -Integer.MAX_VALUE and +Integer.MAX_VALUE. Synchronized.
+	 * @return
+	 */
+	public static synchronized int randomInt() {return ThreadLocalRandom.current().nextInt();}
+	
+	/**
+	 * Get random next int between 0 and @param high. Synchronized.
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized int randomInt(int high) {return ThreadLocalRandom.current().nextInt(high);}
+	
+	/**
+	 * Get random next int between @param low and @param high. Synchronized.
+	 * @param low lower, inclusive, bound for random draw
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized int randomInt(int low, int high) {return ThreadLocalRandom.current().nextInt(low, high);}
+	
+	/**
+	 * Get random next long between -Long.MAX_VALUE and +Long.MAX_VALUE. Synchronized. 
+	 * Due to only using a 48-bit seed, not all possible long values are generated, but those 
+	 * that are generated are stated to be uniformly distributed in the given range.
+	 * @return
+	 */
+	public static synchronized long randomLong() {return ThreadLocalRandom.current().nextLong();}
+	
+	/**
+	 * Get random next long between 0 and @param high. Synchronized.
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized long randomLong(long high) {return ThreadLocalRandom.current().nextLong(high);}
+	
+	/**
+	 * Get random next long between @param low and @param high. Synchronized.
+	 * @param low lower, inclusive, bound for random draw
+	 * @param high upper (exclusionary) bound for random draw
+	 * @return
+	 */
+	public static synchronized long randomLong(long low, long high) {return ThreadLocalRandom.current().nextLong(low, high);}
+	
+	/**
+	 * Random int between @low and @high that is a legal color channel (i.e. [0,255])
+	 * @param low lower, inclusionary bound of red channel
+	 * @param high
+	 * @return
+	 */
+	public static final int randomIntClrChan(int low, int high) {
+		low = (low < 0 ? 0 : low);
+		high = (high > 256 ? 256 : high);
+		return randomInt(low,high);
+	}
+	/**
+	 * Return a random 4-element int array of values suitable for color with each color between minX, inclusive, and maxX, 
+	 * exclusive (ie. use 256 for maxX to get highest bound), with given alpha value.
+	 * @param minR lower, inclusionary bound of red channel
+	 * @param maxR upper, exclusionary, bound of red channel
+	 * @param minG lower, inclusionary bound of green channel
+	 * @param maxG upper, exclusionary, bound of green channel
+	 * @param minB lower, inclusionary bound of blue channel
+	 * @param maxB upper, exclusionary, bound of blue channel
+	 * @param alpha alpha channel value to use
+	 * @return
+	 */
+	public static final int[] randomIntClrAra(int minR, int maxR, int minG, int maxG, int minB, int maxB, int alpha) {
+		return new int[] {randomIntClrChan(minR, maxR), randomIntClrChan(minG,maxG), randomIntClrChan(minB,maxB), alpha};
+	}	
+
+	/**
+	 * Return a random 4-element int array of values suitable for color with each channel less than 
+	 * the passed upper bound (ie. use 256 for maxX to get highest bound), with given alpha value.
+	 * @param maxR upper, exclusionary, bound of red channel
+	 * @param maxG upper, exclusionary, bound of green channel
+	 * @param maxB upper, exclusionary, bound of blue channel
+	 * @param alpha alpha channel value to use
+	 * @return
+	 */
+	public static final int[] randomIntClrAra(int maxR, int maxG, int maxB, int alpha) {return randomIntClrAra(0, maxR, 0, maxG, 0, maxB, alpha);}
+	
+	/**
+	 * Return a random 4-element int array of values suitable for color where each channel is between [0,255], with given alpha value
+	 * @param alpha alpha channel value to use
+	 * @return
+	 */
+	public static final int[] randomIntClrAra(int alpha) {return randomIntClrAra(0, 256, 0, 256, 0, 256, alpha);}	
+		
+	/**
+	 * Return a random 4-element int array of values suitable for color with each color between minX, inclusive, and maxX, 
+	 * exclusive (ie. use 256 for maxX to get highest bound) with alpha == 255
+	 * @param minR lower, inclusionary bound of red channel
+	 * @param maxR upper, exclusionary, bound of red channel
+	 * @param minG lower, inclusionary bound of green channel
+	 * @param maxG upper, exclusionary, bound of green channel
+	 * @param minB lower, inclusionary bound of blue channel
+	 * @param maxB upper, exclusionary, bound of blue channel
+	 * @return
+	 */
+	public static final int[] randomIntClrAra(int minR, int maxR, int minG, int maxG, int minB, int maxB) {return randomIntClrAra(minR, maxR,minG,maxG,minB,maxB, 255);}
+
+	/**
+	 * Return a random 4-element int array of values suitable for color with each channel less than 
+	 * the passed upper bound (ie. use 256 for maxX to get highest bound) with alpha == 255
+	 * @param maxR upper, exclusionary, bound of red channel
+	 * @param maxG upper, exclusionary, bound of green channel
+	 * @param maxB upper, exclusionary, bound of blue channel
+	 * @return
+	 */
+	public static final int[] randomIntClrAra(int maxR, int maxG, int maxB) {return randomIntClrAra(0, maxR, 0, maxG, 0, maxB, 255);}
+
+	/**
+	 * Return a random 4-element int array of values suitable for color where each channel is between [0,255], with alpha == 255
+	 * @return
+	 */
+	public static final int[] randomIntClrAra() {return randomIntClrAra(0, 256, 0, 256, 0, 256, 255);}
+	
+	/**
+	 * Return a random 4-element int array of values suitable for color with each channel between [(r:75,g:30,b:80),255], with alpha == 255
+	 * @return
+	 */
+	public static final int[] randomIntBrightClrAra() {	return randomIntClrAra(75, 256, 30, 256, 80, 256, 255);}
+
+	////////////////////////////////////////////
+	/// End Synchronized Random functions	
+	
+	/**
+	 * Find a random position within a sphere centered at 0 of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @return
+	 */
+	public static myPointf getRandPosInSphere(double rad){ return getRandPosInSphere(rad, new myPointf());}
+	/**
+	 * Find a random position within a sphere centered at ctr of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @param ctr
+	 * @return
+	 */
+	public static myPointf getRandPosInSphere(double rad, myPointf ctr){
+		myPointf pos = new myPointf();
+		double u = randomDouble(0,1),	
+			cosTheta = randomDouble(-1,1),
+			phi = randomDouble(0,TWO_PI_F),
+			r = rad * Math.pow(u, THIRD_F),
+			rSinTheta = r * (Math.sqrt(1.0 - (cosTheta * cosTheta)));			
+		pos.set(rSinTheta * Math.cos(phi), rSinTheta * Math.sin(phi),cosTheta*r);
+		pos._add(ctr);
+		return pos;
+	}
+	/**
+	 * Find a random position on a sphere's surface centered at 0 of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @return
+	 */
+	public static myPointf getRandPosOnSphere(double rad){ return getRandPosOnSphere(rad, new myPointf());}
+	/**
+	 * Find a random position on a sphere's surface centered at ctr of radius rad, using spherical coords as rand axes
+	 * @param rad
+	 * @param ctr
+	 * @return
+	 */
+	public static myPointf getRandPosOnSphere(double rad, myPointf ctr){
+		myPointf pos = new myPointf();
+		double 	cosTheta = randomDouble(-1,1),
+				phi = randomDouble(0,TWO_PI_F), 
+				rSinTheta = rad* (Math.sqrt(1.0 - (cosTheta * cosTheta)));
+		pos.set(rSinTheta * Math.cos(phi), rSinTheta * Math.sin(phi),cosTheta * rad);
+		pos._add(ctr);
+		return pos;
+	}
+	/** 
+	 * convert from spherical coords to cartesian. Returns Array :
+	 * 	idx0 : norm of vector through point from origin
+	 * 	idx1 : point
+	 * @param rad
+	 * @param thet
+	 * @param phi
+	 * @param scaleZ scaling factor to make ellipsoid
+	 * @return ara : norm, surface point == x,y,z of coords passed
+	 */
+	public static myVectorf[] getXYZFromRThetPhi(double rad, double thet, double phi, double scaleZ) {
+		double sinThet = Math.sin(thet);	
+		myVectorf[] res = new myVectorf[2];
+		res[1] = new myVectorf(sinThet * Math.cos(phi) * rad, sinThet * Math.sin(phi) * rad,Math.cos(thet)*rad*scaleZ);
+		res[0] = myVectorf._normalize(res[1]);
+		return res;
+	}//	
+	
+	/** 
+	 * builds a list of N regularly placed vertices and normals for a sphere of radius rad centered at ctr
+	 * @param rad radius of sphere
+	 * @param N # of verts we want in result
+	 * @param scaleZ scaling factor for ellipsoid
+	 * @return list of points (as vectors) where each entry is a tuple of norm/point
+	 */
+	public static myVectorf[][] getRegularSphereList(float rad, int N, float scaleZ) {
+		ArrayList<myVectorf[]> res = new ArrayList<myVectorf[]>();
+		//choose 1 point per dArea, where dArea is area of sphere parsed into N equal portions
+		double lclA = 4*PI/N, lclD = Math.sqrt(lclA);
+		int Mthet = (int) Math.round(PI/lclD), Mphi;
+		double dThet = PI/Mthet, dPhi = lclA/dThet, thet, phi, twoPiOvDPhi = TWO_PI/dPhi;
+		for(int i=0;i<Mthet;++i) {
+			thet = dThet * (i + 0.5f);
+			Mphi = (int) Math.round(twoPiOvDPhi * Math.sin(thet));
+			for (int j=0;j<Mphi; ++j) { 
+				phi = (TWO_PI*j)/Mphi;		
+				res.add(getXYZFromRThetPhi(rad, thet, phi, scaleZ));
+			}
+		}
+		return res.toArray(new myVectorf[0][]);
+	}//getRegularSphereList	
+
+	
 }//math utils
 
