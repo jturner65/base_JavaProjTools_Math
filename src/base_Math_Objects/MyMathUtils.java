@@ -1377,6 +1377,16 @@ public class MyMathUtils {
 	public static synchronized long randomLong(long low, long high) {return ThreadLocalRandom.current().nextLong(low, high);}
 	
 	/**
+	 * Get a random uniform double between 0 and 1.
+	 * @return
+	 */
+	public static synchronized double randomUniform01() {
+		//-Integer.MAX_VALUE to Integer.MAX_VALUE
+    	int val = ThreadLocalRandom.current().nextInt();
+    	return .5+ .5 * val/Integer.MAX_VALUE;
+	}
+	
+	/**
 	 * Random int between @low and @high that is a legal color channel (i.e. [0,255])
 	 * @param low lower, inclusionary bound of red channel
 	 * @param high
