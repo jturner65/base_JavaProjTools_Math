@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import base_Math_Objects.vectorObjs.doubles.myPoint;
-import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.doubles.myVector;
+import base_Math_Objects.vectorObjs.floats.myPointf;
 import base_Math_Objects.vectorObjs.floats.myVectorf;
 
 /**
