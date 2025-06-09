@@ -15,12 +15,12 @@ public enum InterpolantBehavior {
 	oneWayFwdStopLoop, 
 	oneWayBkwdStopLoop;
 	private static final String[] 
-			_typeExplanation = new String[] {"Ping-pong", "Ping-pong w/pause", "1-way fwd loop", "1-way bckwd loop", "1-way fwd pause loop", "1-way bckwd pause loop"};
+			_typeExplanation = new String[]{"Ping-pong", "Ping-pong w/pause", "1-way fwd loop", "1-way bckwd loop", "1-way fwd pause loop", "1-way bckwd pause loop"};
 	private static final String[] 
-			_typeName = new String[] {"Ping-pong", "Ping-pong w/pause", "1-way fwd loop", "1-way bckwd loop",  "1-way fwd pause loop", "1-way bckwd pause loop"};
+			_typeName = new String[]{"Ping-pong", "Ping-pong w/pause", "1-way fwd loop", "1-way bckwd loop",  "1-way fwd pause loop", "1-way bckwd pause loop"};
 	//used for file names
 	private static final String[] 
-			_typeBrfName = new String[] {"pingPong", "pingPongStop", "oneWayFwdLoop", "oneWayBkwdLoop", "oneWayFwdStopLoop", "oneWayBkwdStopLoop"};
+			_typeBrfName = new String[]{"pingPong", "pingPongStop", "oneWayFwdLoop", "oneWayBkwdLoop", "oneWayFwdStopLoop", "oneWayBkwdStopLoop"};
 	
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, InterpolantBehavior> map = new HashMap<Integer, InterpolantBehavior>(); 

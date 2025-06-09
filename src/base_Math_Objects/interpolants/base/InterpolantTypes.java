@@ -12,12 +12,12 @@ import java.util.Map;
 public enum InterpolantTypes {	
 	linear, smoothVelocity, smoothAccel, sine;
 	private static final String[] 
-			_typeExplanation = new String[] {"Linear","Cubic (Continuous Velocity)","Quintic (Continuous Accel)","Sine"};
+			_typeExplanation = new String[]{"Linear","Cubic (Continuous Velocity)","Quintic (Continuous Accel)","Sine"};
 	private static final String[] 
-			_typeName = new String[] {"Linear","Cubic","Quintic","Sine"};
+			_typeName = new String[]{"Linear","Cubic","Quintic","Sine"};
 	//used for file names
 	private static final String[] 
-			_typeBrfName = new String[] {"linear","cubic","quintic","sine"};
+			_typeBrfName = new String[]{"linear","cubic","quintic","sine"};
 	
 	public static String[] getListOfTypes() {return _typeName;}
 	private static Map<Integer, InterpolantTypes> map = new HashMap<Integer, InterpolantTypes>(); 
