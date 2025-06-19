@@ -319,7 +319,7 @@ public class myMatrixf {
 	public myMatrixf clone(){
 		myMatrixf newMat = new myMatrixf();
 		for (int row = 0; row < this.m.length; ++row){
-			System.arraycopy(newMat.m[row], 0, m[row], 0, m[row].length);
+			System.arraycopy(m[row], 0, newMat.m[row], 0, m[row].length);
 			//for (int col = 0; col < this.m[row].length; ++col){newMat.m[row][col] = this.m[row][col];}
 		}
 		return newMat;
