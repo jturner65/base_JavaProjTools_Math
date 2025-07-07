@@ -13,35 +13,35 @@ import base_Math_Objects.quadrature.base.Base_Quadrature;
  */
 public class myGaussLegenQuad extends Base_Quadrature{
     //idx 0 == xvals, idx 1 == wts for gaussian quadrature with legendre polynomials for the integrator for this function
-	protected BigDecimal[][] gaussQuad;
+    protected BigDecimal[][] gaussQuad;
 
-	public myGaussLegenQuad(String _name, int _numPoints, double _tol, int _BDScale) { 
-		super(_name);
-		setSolverVals(_numPoints, _tol, _BDScale);
-	}
+    public myGaussLegenQuad(String _name, int _numPoints, double _tol, int _BDScale) { 
+        super(_name);
+        setSolverVals(_numPoints, _tol, _BDScale);
+    }
 
-	@Override
-	public BigDecimal evalIntegral(Function<Double, Double> func, double min, double max) {
-		//expMgr.dispMessage("myGaussLegenQuad", "evalIntegral", "Integral : min : "+min + " and  max : " + max);
-    	BigDecimal c1 = new BigDecimal((max - min) / 2.0), 
-        		c2 =  new BigDecimal((max + min) / 2.0); 
-    	BigDecimal sum = new BigDecimal(0);
+    @Override
+    public BigDecimal evalIntegral(Function<Double, Double> func, double min, double max) {
+        //expMgr.dispMessage("myGaussLegenQuad", "evalIntegral", "Integral : min : "+min + " and  max : " + max);
+        BigDecimal c1 = new BigDecimal((max - min) / 2.0), 
+                c2 =  new BigDecimal((max + min) / 2.0); 
+        BigDecimal sum = new BigDecimal(0);
         for (int i = 0; i < gaussQuad[0].length; ++i) {  
-        	sum = sum.add(gaussQuad[1][i].multiply(new BigDecimal(func.apply(c1.multiply(gaussQuad[0][i]).add(c2).doubleValue()))));
+            sum = sum.add(gaussQuad[1][i].multiply(new BigDecimal(func.apply(c1.multiply(gaussQuad[0][i]).add(c2).doubleValue()))));
         }        
         BigDecimal res = c1.multiply(sum);
         //expMgr.dispMessage("myGaussLegenQuad", "evalIntegral", "Result : " + res.toString());
         return res;
-	}//evalIntegral
-	
-	
-	//build precalced wts and abscissas for quadrature method
-	@Override
-	protected void preCalcIntegratorValues() {
-     	
-    	BigDecimal[][] lcoef = new BigDecimal[numPoints + 1][numPoints + 1];
-    	for(int i=0;i<lcoef.length;++i) {for(int j=0;j<lcoef[i].length;++j) {lcoef[i][j]=new BigDecimal(0.0);}}
-    	//build coefficients of polynomials to then be used to determine abscissas and wt vals
+    }//evalIntegral
+    
+    
+    //build precalced wts and abscissas for quadrature method
+    @Override
+    protected void preCalcIntegratorValues() {
+         
+        BigDecimal[][] lcoef = new BigDecimal[numPoints + 1][numPoints + 1];
+        for(int i=0;i<lcoef.length;++i) {for(int j=0;j<lcoef[i].length;++j) {lcoef[i][j]=new BigDecimal(0.0);}}
+        //build coefficients of polynomials to then be used to determine abscissas and wt vals
         lcoef[0][0] = new BigDecimal(1.0); 
         lcoef[1][1] = new BigDecimal(1.0);
         BigDecimal negNm1BD, twoNm1BD, nBD;
@@ -65,7 +65,7 @@ public class myGaussLegenQuad extends Base_Quadrature{
         for (int i = 1; i <= xVals.length; ++i) {
             x = new BigDecimal(Math.cos(PiOvnp5 * (i - 0.25)));
             do {//repeat until converges
-            	x1 = new BigDecimal(x.toString());
+                x1 = new BigDecimal(x.toString());
                 legEvalN = evalPoly(lcoef,numPoints, x);
                 legEvalNm1 = evalPoly(lcoef,numPoints-1, x);
                 xSq = x.multiply(x);
@@ -75,14 +75,14 @@ public class myGaussLegenQuad extends Base_Quadrature{
             xSq = x.multiply(x);
             xVals[i-1] = new BigDecimal(x.toString());
             legEvalN = evalPoly(lcoef,numPoints, x);
-            legEvalNm1 = evalPoly(lcoef,numPoints-1, x);            	
+            legEvalNm1 = evalPoly(lcoef,numPoints-1, x);                
             x1 = (((x.multiply(legEvalN)).subtract(legEvalNm1)).divide(xSq.subtract(BigDecimal.ONE), BDScale,RoundingMode.HALF_UP)).multiply(numPointsBD);//legeDiff(lcoef,numPoints, x);
             BigDecimal denom = ((BigDecimal.ONE.subtract(xSq)).multiply(x1.multiply(x1)));
             wts[i-1] = new BigDecimal(2.0);
             wts[i-1] = wts[i-1].divide(denom, BDScale,RoundingMode.HALF_UP);
         }
-        gaussQuad = new BigDecimal[][] {xVals, wts};	
-	}//calcWtsAndAbscissas
-	
-	
+        gaussQuad = new BigDecimal[][] {xVals, wts};    
+    }//calcWtsAndAbscissas
+    
+    
 }//class myGaussLegenQuad

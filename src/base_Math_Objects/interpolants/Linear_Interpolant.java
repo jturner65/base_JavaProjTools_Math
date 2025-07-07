@@ -9,10 +9,10 @@ import base_Math_Objects.interpolants.base.Base_Interpolant;
  */
 public class Linear_Interpolant extends Base_Interpolant {
 
-	public Linear_Interpolant(float _t) {	super(_t);}
-	public Linear_Interpolant(float _t, float _stopTimer) {super(_t,_stopTimer);}
+    public Linear_Interpolant(float _t) {    super(_t);}
+    public Linear_Interpolant(float _t, float _stopTimer) {super(_t,_stopTimer);}
 
-	@Override
-	protected float calcInterpolant_Indiv(float _rawT) {return _rawT;}
+    @Override
+    protected float calcInterpolant_Indiv(float _rawT) {return _rawT;}
 
 }//class Linear_Interpolant
