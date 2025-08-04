@@ -35,6 +35,7 @@ public class MyMathUtils {
         INV_SQRT_3 = 1.0/SQRT_3,
         DEG_TO_RAD = PI/180.0,
         EPS = 1e-8,
+        EPS_SQ = EPS*EPS,
         LOG_2 = Math.log(2.0),
         LOG_10 = Math.log(10.0);
     
@@ -56,6 +57,7 @@ public class MyMathUtils {
         INV_SQRT_3_F = (float) INV_SQRT_3,
         DEG_TO_RAD_F = (float)DEG_TO_RAD,
         EPS_F = (float) EPS,
+        EPS_F_SQ  = (float)EPS_SQ,
         LOG_2_F = (float)LOG_2,
         LOG_10_F = (float)LOG_10;
     
@@ -400,7 +402,8 @@ public class MyMathUtils {
             val = val.shiftRight(blex);
             double res = Math.log(val.doubleValue());
             return res + blex * LOG_2;
-        } else {            return Math.log(val.doubleValue());        }
+        } 
+        return Math.log(val.doubleValue());
     }
 
     /**
@@ -415,7 +418,7 @@ public class MyMathUtils {
         if (val.signum() < 1) { return val.signum() < 0 ? Double.NaN : Double.NEGATIVE_INFINITY;}
         int digits = val.precision() - val.scale(); 
         if (digits < MAX_DIGITS_10 && digits > -MAX_DIGITS_10) {return Math.log(val.doubleValue());}
-        else {            return logBigInteger(val.unscaledValue()) - val.scale() * LOG_10;}
+        return logBigInteger(val.unscaledValue()) - val.scale() * LOG_10;
     }
 
     /**
@@ -458,12 +461,12 @@ public class MyMathUtils {
         if (b == 1) {  return BigDecimal.valueOf(a);}
         if (a == 0) {
             if (b >= 0) { return BigDecimal.ZERO;}
-            else {        throw new IllegalArgumentException("0**negative = infinite");}
+            throw new IllegalArgumentException("0**negative = infinite");
         }
         if (a < 0) { throw new IllegalArgumentException("negative base a=" + a);}
         double x = b * Math.log(a);
         if (Math.abs(x) < MAX_DIGITS_EXP) { return BigDecimal.valueOf(Math.pow(a, b));}
-        else {                              return expBig(x);}
+        return expBig(x);
     }
     
     /**
@@ -488,9 +491,7 @@ public class MyMathUtils {
      */
     public static myVectorf[] getVecFrameNormalized(myVectorf vec, myVectorf norm) {
         myVectorf[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVectorf[nn_result.length];
-        for(int i=0;i<result.length;++i) {
-            result[i]=nn_result[i]._normalized();
-        }
+        for(int i=0;i<result.length;++i) {result[i]=nn_result[i]._normalized();}
         return result;
     }
     
@@ -516,9 +517,7 @@ public class MyMathUtils {
      */
     public static myVector[] getVecFrameNormalized(myVector vec, myVector norm) {
         myVector[] nn_result = getVecFrameNonNorm(vec, norm), result = new myVector[nn_result.length];
-        for(int i=0;i<result.length;++i) {
-            result[i]=nn_result[i]._normalized();
-        }
+        for(int i=0;i<result.length;++i) {result[i]=nn_result[i]._normalized();}
         return result;
     }
     
@@ -565,8 +564,6 @@ public class MyMathUtils {
      * @return
      */
     public static long min(long x, long y) {      return (x<y) ? x : y;    }
-    
-    
     /**
      * Return max of 2 floats
      * @param x
@@ -630,15 +627,12 @@ public class MyMathUtils {
      */
     public static double min(double x, double y, double z) {      return min(min(x,y),z);  }
     
-    
     /**
      * Return max of array of ints
      */
     public static int max(int[] valAra) {      
         int res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] > res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] > res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -646,9 +640,7 @@ public class MyMathUtils {
      */
     public static int min(int[] valAra) {
         int res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] < res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] < res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -656,9 +648,7 @@ public class MyMathUtils {
      */
     public static long max(long[] valAra) {      
         long res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] > res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] > res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -666,9 +656,7 @@ public class MyMathUtils {
      */
     public static long min(long[] valAra) {
         long res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] < res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] < res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -676,9 +664,7 @@ public class MyMathUtils {
      */
     public static float max(float[] valAra) {
         float res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] > res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] > res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -686,9 +672,7 @@ public class MyMathUtils {
      */
     public static float min(float[] valAra) {
         float res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] < res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] < res){res = valAra[i];}}
         return res; 
     }    
     /**
@@ -696,9 +680,7 @@ public class MyMathUtils {
      */
     public static double max(double[] valAra) {
         double res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] > res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] > res){res = valAra[i];}}
         return res; 
     }
     /**
@@ -706,9 +688,7 @@ public class MyMathUtils {
      */
     public static double min(double[] valAra) {
         double res = valAra[0];
-        for (int i=1;i<valAra.length;++i) {    
-            if(valAra[i] < res){res = valAra[i];}    
-        }
+        for (int i=1;i<valAra.length;++i) {if(valAra[i] < res){res = valAra[i];}}
         return res; 
     }
     
@@ -717,7 +697,7 @@ public class MyMathUtils {
      * @param valAra one or more values 
      * @return
      */
-    public static int[] minAndMax(int[] valAra) {            
+    public static int[] minAndMax(int[] valAra) {
         int[] res = new int[] {valAra[0], valAra[0]};
         for (int i=1;i<valAra.length;++i) {    
             if(valAra[i] < res[0]){res[0] = valAra[i];}    //min value
@@ -772,20 +752,20 @@ public class MyMathUtils {
     /**
      * return max value of any comparable type
      */
-    public static <T extends Comparable<T>> T max(T x, T y) {      return (x.compareTo(y) > 0) ? x : y;    }
+    public static <T extends Comparable<T>> T max(T x, T y) {           return (x.compareTo(y) > 0) ? x : y;    }
     /**
      * return min value of any comparable type
      */
-    public static <T extends Comparable<T>> T min(T x, T y) {      return (x.compareTo(y) < 0) ? x : y;    }
+    public static <T extends Comparable<T>> T min(T x, T y) {           return (x.compareTo(y) < 0) ? x : y;    }
    
     /**
      * return max value of any comparable type of 3 values
      */
-    public static <T extends Comparable<T>> T max(T x, T y, T z) {        return max(max(x,y),z);    }
+    public static <T extends Comparable<T>> T max(T x, T y, T z) {      return max(max(x,y),z);    }
     /**
      * return min value of any comparable type
      */
-    public static <T extends Comparable<T>> T min(T x, T y, T z) {        return min(min(x,y),z);     }
+    public static <T extends Comparable<T>> T min(T x, T y, T z) {      return min(min(x,y),z);     }
     
     /**
      * Range checking of value, as double
@@ -902,11 +882,9 @@ public class MyMathUtils {
      * @return whether entire value array is within bounds
      */
     public static boolean valuesInRange(double[] vals, double[] mins, double[] maxs) {
-        if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}    //insufficient bounds passed
+        if((vals.length != mins.length) || (vals.length != maxs.length)){       return false;}    //insufficient bounds passed
         int len = vals.length;
-        for(int i=0;i<len;++i) {
-            if((vals[i] <mins[i]) || (vals[i] > maxs[i])){    return false;}        
-        }        
+        for(int i=0;i<len;++i) {if((vals[i] <mins[i]) || (vals[i] > maxs[i])){  return false;}}
         return true;
     }
     
@@ -918,11 +896,9 @@ public class MyMathUtils {
      * @return whether entire value array is within bounds
      */
     public static boolean valuesInRange(float[] vals, float[] mins, float[] maxs) {
-        if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}    //insufficient bounds passed
+        if((vals.length != mins.length) || (vals.length != maxs.length)){       return false;}    //insufficient bounds passed
         int len = vals.length;
-        for(int i=0;i<len;++i) {
-            if((vals[i] <mins[i]) || (vals[i] > maxs[i])){    return false;}        
-        }        
+        for(int i=0;i<len;++i) {if((vals[i] <mins[i]) || (vals[i] > maxs[i])){  return false;}}
         return true;
     }
     
@@ -934,11 +910,9 @@ public class MyMathUtils {
      * @return whether entire value array is within bounds
      */
     public static boolean valuesInRange(int[] vals, int[] mins, int[] maxs) {
-        if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}    //insufficient bounds passed
+        if((vals.length != mins.length) || (vals.length != maxs.length)){       return false;}    //insufficient bounds passed
         int len = vals.length;
-        for(int i=0;i<len;++i) {
-            if((vals[i] <mins[i]) || (vals[i] > maxs[i])){    return false;}        
-        }        
+        for(int i=0;i<len;++i) {if((vals[i] <mins[i]) || (vals[i] > maxs[i])){  return false;}}
         return true;
     }
     
@@ -950,11 +924,9 @@ public class MyMathUtils {
      * @return whether entire value array is within bounds
      */
     public static boolean valuesInRange(long[] vals, long[] mins, long[] maxs) {
-        if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}    //insufficient bounds passed
+        if((vals.length != mins.length) || (vals.length != maxs.length)){       return false;}    //insufficient bounds passed
         int len = vals.length;
-        for(int i=0;i<len;++i) {
-            if((vals[i] < mins[i]) || (vals[i] > maxs[i])){    return false;}        
-        }        
+        for(int i=0;i<len;++i) {if((vals[i] <mins[i]) || (vals[i] > maxs[i])){  return false;}}
         return true;
     }
     
@@ -968,9 +940,7 @@ public class MyMathUtils {
     public static <T extends Comparable<T>> boolean valuesInRange(T[] vals, T[] mins, T[] maxs) {
         if((vals.length != mins.length) || (vals.length != maxs.length)){return false;}    //insufficient bounds passed
         int len = vals.length;
-        for(int i=0;i<len;++i) {
-            if((vals[i].compareTo(mins[i]) < 0)  || (vals[i].compareTo(maxs[i]) > 0)){    return false;}        
-        }        
+        for(int i=0;i<len;++i) {if((vals[i].compareTo(mins[i]) < 0)  || (vals[i].compareTo(maxs[i]) > 0)){    return false;}}
         return true;
     }
      
@@ -1096,9 +1066,7 @@ public class MyMathUtils {
         float a = (TWO_PI_F)/(1.0f*n);
         for(int i=1;i<n;++i){pts[i] = pts[i-1].rotMeAroundPt(a,J,I,p);}
         return pts;
-    }
-    
-    
+    }    
     /**
      * 
      * @param A

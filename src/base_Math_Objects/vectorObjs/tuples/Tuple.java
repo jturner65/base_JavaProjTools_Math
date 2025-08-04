@@ -1,7 +1,10 @@
 package base_Math_Objects.vectorObjs.tuples;
 
-
-//only works for comparables
+/**
+ * only works for comparables
+ * @param <X>
+ * @param <Y>
+ */
 public class Tuple<X,Y> implements Comparable<Tuple<X,Y>> { 
     //private static final int[] seeds = new int[] {7919, 1699};
     public final X x;    public final Y y;  private final Float sqmag; private final int hash;

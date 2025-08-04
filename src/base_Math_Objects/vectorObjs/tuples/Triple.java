@@ -1,6 +1,11 @@
 package base_Math_Objects.vectorObjs.tuples;
 
-//only works for comparables
+/**
+ * only works for comparables
+ * @param <X>
+ * @param <Y>
+ * @param <Z>
+ */
 public class Triple<X,Y,Z> implements Comparable<Triple<X,Y,Z>> { 
     //private static final int[] seeds = new int[] {7919, 1699, 5659};
     public final X x;    public final Y y; public final Z z; private final Float sqmag;

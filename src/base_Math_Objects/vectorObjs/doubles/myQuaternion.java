@@ -1,8 +1,14 @@
 package base_Math_Objects.vectorObjs.doubles;
 
 public class myQuaternion {
-    myVector v;
-    double x,y,z,w, magn, sqMagn;
+    /**
+     * Direction
+     */
+    private myVector v;
+    /**
+     * Values
+     */
+    private double x,y,z,w, magn, sqMagn;
     public myQuaternion(){v = new myVector();x=v.x;y=v.y;z=v.z; w = 0.0;_mag();    }    
     public myQuaternion(myVector _v, double _w){v = _v;x=v.x;y=v.y;z=v.z; w = _w;    _mag();}    
     public myQuaternion(float _x, float _y, float _z, float _w) {this(new myVector(_x,_y,_z),_w);    }
@@ -12,8 +18,13 @@ public class myQuaternion {
     //call internally whenever values change to keep vector and x,y,z values synched
     protected void _pset(double _x, double _y, double _z, double _w){v.set(_x,_y,_z);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
     protected void _pset(myVector _v, double _w){v.set(_v);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
-    //given axis angle representation, convert to quaternion
+    /**
+     * given axis angle representation, convert to quaternion
+     * @param theta
+     * @param vec will be normalized
+     */
     public void setFromAxisAngle(double theta, myVector vec){
+        vec._normalize();
         double htht = theta/2.0f, sThetH = Math.sin(htht);
         _pset(myVector._mult(vec,sThetH), Math.cos(htht));
     }
@@ -23,18 +34,29 @@ public class myQuaternion {
     public double _dot(myQuaternion q){return ((this.x*q.x) + (this.y*q.y) + (this.z*q.z)+ (this.w*q.w));}
     
     public myQuaternion _normalize(){this._mag();if(magn==0){return this;} _pset(x/magn,y/magn,z/magn,w/magn);return this;}
-    public static myQuaternion _normalize(myQuaternion _v){_v._mag(); return new myQuaternion(_v.x/_v.magn,_v.y/_v.magn,_v.z/_v.magn,_v.w/_v.magn);}
-    //multiply this quaternion by another quaternion -> this * q
+    public static myQuaternion _normalize(myQuaternion _q){_q._mag(); return new myQuaternion(_q.x/_q.magn,_q.y/_q.magn,_q.z/_q.magn,_q.w/_q.magn);}
+    /**
+     * multiply this quaternion by another quaternion -> this * q
+     * @param q
+     * @return
+     */
     public myQuaternion _qmult(myQuaternion q){
         myVector t1 = myVector._mult(q.v, w), t2 = myVector._mult(v, q.w), t3 = v._cross(q.v); 
         t1._add(t2);t1._add(t3);
         myQuaternion res = new myQuaternion(t1, (this.w * q.w) - v._dot(q.v) );
         return res;
     }
-    //give the conjugate of this quaternion
+    /**
+     * give the conjugate of this quaternion
+     * @return
+     */
     public myQuaternion _conj(){return new myQuaternion(myVector._mult(v, -1.0),w);}
     
-    //rotate the passed vector by this quaternion -> q*q_v*qstar
+    /**
+     * rotate the passed vector by this quaternion -> q*q_v*qstar
+     * @param _v
+     * @return
+     */
     public myVector _rot(myVector _v){
         myQuaternion qnorm = myQuaternion._normalize(this),
                 q_v = new myQuaternion(_v, 0),
@@ -44,14 +66,23 @@ public class myQuaternion {
         return res.v;
     }
     
-    //rotate toRotVec by passed angle around rVec
+    /**
+     * rotate toRotVec by passed angle around rVec
+     * @param theta
+     * @param rVec
+     * @param toRotVec
+     * @return
+     */
     public static myVector _quatRot(double theta, myVector rVec, myVector toRotVec){
         myQuaternion _tmp = new myQuaternion();
         _tmp.setFromAxisAngle(theta,rVec);            //set from passed angle and axis
         return _tmp._rot(toRotVec);    
     }    
     
-    //convert this to axis angle - theta,rx,ry,rz
+    /**
+     * convert this to axis angle - theta,rx,ry,rz
+     * @return
+     */
     public double[] toAxisAngle(){
         myQuaternion tmp = new myQuaternion(this);
         if (tmp.w > 1) {tmp._normalize();}                                             // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
@@ -60,7 +91,8 @@ public class myQuaternion {
         else {        return new double[]{thet, tmp.x/s, tmp.y/s, tmp.z/s}; }
     }//asAxisAngle
     
-    private static myQuaternion _lerp(myQuaternion qa, myQuaternion qb, double t1, double t2){return new myQuaternion(myVector._add(myVector._mult(qa.v,t1), myVector._mult(qb.v,t2)), (qa.w * t1) + (qb.w*t2));}
+    private static myQuaternion _lerp(myQuaternion qa, myQuaternion qb, double t1, double t2){
+        return new myQuaternion(myVector._add(myVector._mult(qa.v,t1), myVector._mult(qb.v,t2)), (qa.w * t1) + (qb.w*t2));}
     
     public static myQuaternion _slerp(myQuaternion qa, myQuaternion qb, double t){
         // Calculate angle between them.

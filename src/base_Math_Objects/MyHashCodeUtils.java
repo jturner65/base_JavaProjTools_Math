@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
 public final class MyHashCodeUtils {    
     /**
     * An initial value for a <tt>hashCode</tt>, to which is added contributions
-    * from fields. Using a non-zero value decreases collisons of <tt>hashCode</tt>
+    * from fields. Using a non-zero value decreases collisions of <tt>hashCode</tt>
     * values.
     */
     public static final int SEED = 23;

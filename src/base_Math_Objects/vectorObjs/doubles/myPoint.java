@@ -56,7 +56,7 @@ public class myPoint {
      * @param s : value [0,1] to determine linear interpolation
      * @param B : second point to interpolate from
      */
-    public myPoint(myPoint A, double s, myPoint B) {this(A.x+s*(B.x-A.x),A.y+s*(B.y-A.y),A.z+s*(B.z-A.z)); };        //builds a point somewhere in between a and b
+    public myPoint(myPoint A, double s, myPoint B) {   this(_linInterp(A.x, s, B.x), _linInterp(A.y, s, B.y), _linInterp(A.z, s, B.z)); };        //builds a point somewhere in between a and b
     /**
      * empty constructor
      */
@@ -415,6 +415,29 @@ public class myPoint {
         if (b instanceof myPoint v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
         return false;            
     }//equals
+    
+    /**
+     * Linearly interpolate between two floating point values
+     * @param a
+     * @param s interpolant
+     * @param b
+     * @return
+     */
+    protected final static double _linInterp(double a, double s, double b) {return (1-s)*a + (s)*b;}
+    
+    /**
+     * Linearly interpolate between two floating point values, restricting result to lie in [min, max]
+     * @param a
+     * @param s interpolant
+     * @param b
+     * @param min
+     * @param max
+     * @return
+     */
+    protected final static double _cappedLinInterp(double a, double s, double b, double min, double max) {
+        double res = (1-s)*a + (s)*b; 
+        return (res > max ? max : res < min ? min : res);
+    }
     
     public String toStrCSV(){return toStrCSV("%.4f");}    
     public String toStrCSV(String fmt){return "" + String.format(fmt,this.x) + ", " + String.format(fmt,this.y) + ", " + String.format(fmt,this.z);}    

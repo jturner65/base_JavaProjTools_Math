@@ -2,7 +2,7 @@ package base_Math_Objects.interpolants;
 
 import base_Math_Objects.interpolants.base.Base_Interpolant;
 /**
- * 5th order interpolant with continous accel
+ * 5th order interpolant with continuous accel
  * @author john
  *
  */
@@ -12,6 +12,6 @@ public class Quintic_Interpolant extends Base_Interpolant {
     public Quintic_Interpolant(float _t, float _stopTimer) {super(_t,_stopTimer);}
 
     @Override
-    protected float calcInterpolant_Indiv(float _rawt) {        return (_rawt * _rawt * _rawt *(10.0f  + _rawt*(-15.0f + 6.0f*_rawt)));    }
+    protected float calcInterpolant_Indiv(float _rawT) {        return (_rawT * _rawT * _rawT *(10.0f  + _rawT*(-15.0f + 6.0f*_rawT)));    }
 
 }//class Quintic_Interpolant

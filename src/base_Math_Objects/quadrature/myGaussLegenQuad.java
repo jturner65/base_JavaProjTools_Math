@@ -12,7 +12,11 @@ import base_Math_Objects.quadrature.base.Base_Quadrature;
  * @author john
  */
 public class myGaussLegenQuad extends Base_Quadrature{
-    //idx 0 == xvals, idx 1 == wts for gaussian quadrature with legendre polynomials for the integrator for this function
+    /**
+     * Values for gaussian quadrature with legendre polynomials for the integrator for this function
+     *  idx 0 == xvals, 
+     *  idx 1 == wts
+     */
     protected BigDecimal[][] gaussQuad;
 
     public myGaussLegenQuad(String _name, int _numPoints, double _tol, int _BDScale) { 
@@ -35,7 +39,9 @@ public class myGaussLegenQuad extends Base_Quadrature{
     }//evalIntegral
     
     
-    //build precalced wts and abscissas for quadrature method
+    /**
+     * build precalced wts and abscissas for quadrature method
+     */
     @Override
     protected void preCalcIntegratorValues() {
          

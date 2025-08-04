@@ -6,7 +6,7 @@ import base_Math_Objects.interpolants.Quintic_Interpolant;
 import base_Math_Objects.interpolants.Sine_Interpolant;
 
 /**
- * this class manages an interpolant - a value to be varied between 0 and 1
+ * This class manages an interpolant - a value to be varied between 0 and 1
  * to be used to interpolate, extrapolate, or animate, between some set of values
  * @author john
  *
@@ -16,16 +16,16 @@ public abstract class Base_Interpolant {
     /**
      * basic interpolant - always between 0 and 1 and linearly evolved
      */
-    private float raw_t;
+    private float _rawT;
     /**
-     * interpolant to be used by consumer
+     * interpolant to be used by consumer - transformed 
      */
     private float t;
     
     /**
      * used to determine direction of modification for interpolant
      */
-    private float sign = 1.0f;
+    private float modDir = 1.0f;
     
     /**
      * for interpolants that stop at extremal locations
@@ -52,11 +52,14 @@ public abstract class Base_Interpolant {
     }
     
     public final void setAnimBehavior(int _idx) {animBehavior = InterpolantBehavior.getEnumByIndex(_idx);}
-    
+    /**
+     * Set underlying raw interpolant value - clipped to be between 0 and 1.
+     * @param _t
+     */
     public final void setValue(float _t) {
-        raw_t=(_t<0 ? 0 : _t>1.0f ? 1.0f : _t);
+        _rawT = (_t<0 ? 0 : _t>1.0f ? 1.0f : _t);
         isStopped = false;    
-        t=calcInterpolant(raw_t);
+        t = calcInterpolant(_rawT);
     }
     /**
      * return processed fade/interpolant
@@ -65,102 +68,107 @@ public abstract class Base_Interpolant {
     public float getValue() {return t;}
     
     /**
-     * function evolves rawT, only to be used for actual animation
+     * Function evolves rawT, only to be used for actual animation
      * @param amt
      */
     protected final void _evolveRawT (float amt) {
         switch(animBehavior) {
-            case pingPong                 :
-            case pingPongStop             : 
-            case oneWayFwdLoop             :
-            case oneWayFwdStopLoop        : {    raw_t += amt;    break;}
-            case oneWayBkwdLoop         : 
-            case oneWayBkwdStopLoop        : {    raw_t -= amt;    break;}            
-            default                     : {    raw_t += amt;}//unknown defaults to ping-pong
+            case pingPong            :
+            case pingPongStop        : 
+            case oneWayFwdLoop       :
+            case oneWayFwdStopLoop   : {    _rawT += amt;    break;}
+            case oneWayBkwdLoop      : 
+            case oneWayBkwdStopLoop  : {    _rawT -= amt;    break;}            
+            default                  : {    _rawT += amt;}              //unknown defaults to ping-pong
         }//switch            
     }
     
+    /**
+     * Reset the stop timer value and enable stop flag
+     */
+    private void _restartStopTime() {        stopTimeT = 0.0f;    isStopped = true; }
+    
+    /**
+     * Evolve the stop time timer, and set whether the desired stop duration has passed
+     * @param delta
+     */
+    private void _evolveStopTimer(float delta) {                    
+        stopTimeT += delta;
+        isStopped = (stopTimeT < stopTimerDur);
+    }
+    
+    /**
+     * Evolve the value of the interpolant by given amount
+     * @param delta amount to evolve interpolant
+     * @return
+     */
     public final float evolveInterpolant(float delta) {        
         //if(isStopped) {    System.out.println("Stopped :stopTimeT : " + stopTimeT + " | delta :"+delta + " | stopTimerDur : " + stopTimerDur);}
         switch(animBehavior) {
             case pingPong         : {
                 isStopped = false;
-                raw_t += (sign * delta);    
-                if(raw_t >= 1.0f) {raw_t = 1.0f;sign = -1.0f;} else if (raw_t <= 0.0f) {    raw_t = 0.0f;    sign = 1.0f;}        
+                _rawT += (modDir * delta);    
+                if(_rawT >= 1.0f) {         _rawT = 1.0f; modDir = -1.0f;} 
+                else if (_rawT <= 0.0f) {   _rawT = 0.0f; modDir = 1.0f;}        
                 break;}
             case pingPongStop         : {
-                if(isStopped) {//manage timer for duration of stop
-                    stopTimeT += delta;
-                    isStopped = (stopTimeT < stopTimerDur);
-                } else {        
-                    raw_t += (sign * delta);    
-                    if(raw_t >= 1.0f) {
-                        raw_t = 1.0f;   sign = -1.0f;
-                        stopTimeT = 0.0f;    isStopped = true;
-                    } else if (raw_t <= 0.0f) {
-                        raw_t = 0.0f;    sign = 1.0f;
-                        stopTimeT = 0.0f;    isStopped = true;
-                    } 
+              //manage timer for duration of stop
+                if(isStopped) {              _evolveStopTimer(delta);} 
+                else {        
+                    _rawT += (modDir * delta);    
+                    if(_rawT >= 1.0f) {       _rawT = 1.0f;  modDir = -1.0f; _restartStopTime();} 
+                    else if (_rawT <= 0.0f) { _rawT = 0.0f;  modDir = 1.0f;  _restartStopTime();} 
                 }
                 break;}
             case oneWayFwdLoop         : {
                 isStopped = false;
-                raw_t += delta;    
-                if(raw_t >= 1.0f) {raw_t = 0.0f;}
+                _rawT += delta;    
+                if(_rawT > 1.0f) {     _rawT = 0.0f;}  //restart at beginning
                 break;}
             case oneWayBkwdLoop     : {
                 isStopped = false;
-                raw_t  -= delta;    
-                if (raw_t <= 0.0f) {    raw_t = 1.0f;}    
-                break;}        
-            
+                _rawT  -= delta;    
+                if (_rawT < 0.0f) {    _rawT = 1.0f;}  //restart at ending
+                break;}
             case oneWayFwdStopLoop        : {
-                if(isStopped) {//manage timer for duration of stop
-                    stopTimeT += delta;
-                    isStopped = (stopTimeT < stopTimerDur);
-                    if(!isStopped) {                        raw_t = 0.0f;}//turning off stop
+                //manage timer for duration of stop
+                if(isStopped) {              _evolveStopTimer(delta);
+                    if(!isStopped) {         _rawT = 0.0f;}     //stop time ended, start at beginning again
                 } else {        
-                    raw_t += delta;    
-                    if(raw_t >= 1.0f) {
-                        raw_t = 1.0f;
-                        stopTimeT = 0.0f;    isStopped = true;
-                    }
+                    _rawT += delta;    
+                    if(_rawT >= 1.0f) {      _rawT = 1.0f;      _restartStopTime();}
                 }
                 break;}
             case oneWayBkwdStopLoop        : {
-                if(isStopped) {//manage timer for duration of stop
-                    stopTimeT += delta;
-                    isStopped = (stopTimeT < stopTimerDur);
-                    if(!isStopped) {                        raw_t = 1.0f;}//turning off stop
+                //manage timer for duration of stop
+                if(isStopped) {              _evolveStopTimer(delta);
+                    if(!isStopped) {         _rawT = 1.0f;}      //stop time ended, start at end again
                 } else {        
-                    raw_t  -= delta;    
-                    if (raw_t <= 0.0f) {
-                        raw_t = 0.0f;
-                        stopTimeT = 0.0f;    isStopped = true;
-                    }    
+                    _rawT  -= delta;    
+                    if (_rawT <= 0.0f) {     _rawT = 0.0f;      _restartStopTime();}
                 }
                 break;}
             
             default         :    {//unknown defaults to ping-pong
-                raw_t += (sign * delta);    
-                if(raw_t > 1.0f) {raw_t = 1.0f;sign = -1.0f;} else if (raw_t < 0.0f) {    raw_t = 0.0f;    sign = 1.0f;}                    
+                _rawT += (modDir * delta);    
+                if(_rawT > 1.0f) {_rawT = 1.0f;modDir = -1.0f;} else if (_rawT < 0.0f) {    _rawT = 0.0f;    modDir = 1.0f;}                    
             }
         }//switch
-//        raw_t += (sign * delta);            
-//        if(raw_t > 1.0f) {raw_t = 1.0f;sign = -1.0f;} else if (raw_t < 0.0f) {    raw_t = 0.0f;    sign = 1.0f;}
-        t=calcInterpolant(raw_t);
+//        _rawT += (modDir * delta);            
+//        if(_rawT > 1.0f) {_rawT = 1.0f;modDir = -1.0f;} else if (_rawT < 0.0f) {    _rawT = 0.0f;    modDir = 1.0f;}
+        t = calcInterpolant(_rawT);
         return t;
     }
     /**
      * build actual interpolant fade 
      * @return
      */
-    public final float calcInterpolant(float _rawt) {
-        if(_rawt<=0) {return 0.0f;}
-        if(_rawt>=1.0f) {return 1.0f;}
-        return calcInterpolant_Indiv(_rawt);
+    public final float calcInterpolant(float _rawT) {
+        if(_rawT<=0) {return 0.0f;}
+        if(_rawT>=1.0f) {return 1.0f;}
+        return calcInterpolant_Indiv(_rawT);
     }
-    protected abstract float calcInterpolant_Indiv(float _rawt);
+    protected abstract float calcInterpolant_Indiv(float _rawT);
     
     /**
      * build an interpolant of passed type, for type defined in Base_Interpolant
@@ -170,10 +178,10 @@ public abstract class Base_Interpolant {
     public static Base_Interpolant buildInterpolant(InterpolantTypes animType, float _initT) {return buildInterpolant(animType, _initT, _dfltStopTimerDur);}
     public static Base_Interpolant buildInterpolant(InterpolantTypes animType, float _initT, float _stopTime) {
         switch(animType) {
-            case linear                 : {        return new Linear_Interpolant(_initT,_stopTime);        }
-            case smoothVelocity            : {        return new Cubic_Interpolant(_initT,_stopTime);        }
-            case smoothAccel             : {        return new Quintic_Interpolant(_initT,_stopTime);        }
-            case sine                    : {        return new Sine_Interpolant(_initT,_stopTime);        }
+            case linear          : {        return new Linear_Interpolant(_initT,_stopTime);        }
+            case smoothVelocity  : {        return new Cubic_Interpolant(_initT,_stopTime);        }
+            case smoothAccel     : {        return new Quintic_Interpolant(_initT,_stopTime);        }
+            case sine            : {        return new Sine_Interpolant(_initT,_stopTime);        }
             default : {
                 System.out.println("Base_Interpolant :: buildInterpolant :: Unknown interpolant type : " + animType.toString() + ".  Aborting.");
                 return null;

@@ -13,6 +13,6 @@ public class Cubic_Interpolant extends Base_Interpolant {
     public Cubic_Interpolant(float _t, float _stopTimer) {super(_t,_stopTimer);}
 
     @Override
-    protected float calcInterpolant_Indiv(float _rawt) {    return (_rawt * _rawt * (3.0f - (2.0f*_rawt)));}
+    protected float calcInterpolant_Indiv(float _rawT) {    return (_rawT * _rawT * (3.0f - (2.0f*_rawT)));}
 
 }//class Hermite_Interpolant

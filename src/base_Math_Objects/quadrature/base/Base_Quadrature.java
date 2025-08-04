@@ -9,11 +9,17 @@ import java.util.function.Function;
  *
  */
 public abstract class Base_Quadrature {
-    //# of wts/points used for quadrature or # of samples
+    /**
+     * # of wts/points used for quadrature or # of samples
+     */
     public int numPoints;
-    //convergence tolerance to use for iterative derivation methods
+    /**
+     * convergence tolerance to use for iterative derivation methods
+     */
     public double convTol;    
-    //big decimal scale to use for big decimals in this integrator
+    /**
+     * big decimal scale to use for big decimals in this integrator
+     */
     public int BDScale;        
     
     public final String name;

@@ -12,8 +12,13 @@ public class myQuaternionf {
     //call internally whenever values change to keep vector and x,y,z values synched
     protected void _pset(float _x, float _y, float _z, float _w){v.set(_x,_y,_z);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
     protected void _pset(myVectorf _v, float _w){v.set(_v);x=v.x;y=v.y;z=v.z; w = _w;_mag();}    
-    //given axis angle representation, convert to quaternion
+    /**
+     * given axis angle representation, convert to quaternion
+     * @param theta
+     * @param vec
+     */
     public void setFromAxisAngle(float theta, myVectorf vec){
+        vec._normalize();
         float htht = theta/2.0f, sThetH = (float)(Math.sin(htht));
         _pset(myVectorf._mult(vec,sThetH), (float)(Math.cos(htht)));
     }

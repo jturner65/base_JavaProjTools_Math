@@ -2,9 +2,18 @@ package base_Math_Objects.vectorObjs.doubles;
 
 import base_Math_Objects.MyMathUtils;
 
+/**
+ * Specialization of a double based myPoint intended to be used as a control point for trajectories.
+ */
 public class myCntlPt extends myPoint {
+    /**
+     * Control point ID
+     */
     public int ID;
     public static int IDincr = 0;
+    /**
+     * Radius values for display of control points
+     */
     public static final double maxR = 75, 
             minR = 1,
             baseRad = 20;            //default radius for control points
@@ -14,14 +23,31 @@ public class myCntlPt extends myPoint {
     public myCntlPt(myPoint _p, double _w){this( _p, baseRad, _w);}
     public myCntlPt(myPoint _p){this( _p, baseRad, baseRad);}
     public myCntlPt(){this(new myPoint(), baseRad, 1);}
-    //Be sure to undo IDincr increment from main constructor
-    public myCntlPt(myCntlPt _p){this(new myPoint(_p),_p.r,_p.w); ID = _p.ID; --IDincr;}        
-    public static myCntlPt L(myCntlPt A, double s, myCntlPt B){    return new myCntlPt(new myPoint(A, s, B), capInterpR(A.r, s, B.r), (1-s)*A.w + (s)*B.w);}//(1-s)*A.r + (s)*B.r,
-    public static myCntlPt P(myCntlPt A, myCntlPt B){    double s = .5f;return L(A, s, B);}
+    /**
+     * Copy ctor
+     * @param _p
+     */
+    public myCntlPt(myCntlPt _p){ super(_p);  ID = _p.ID;  r = _p.r; w = _p.w;}
+    /**
+     * Interpolating constructor
+     * @param A
+     * @param s
+     * @param B
+     */
+    public myCntlPt(myCntlPt A, double s, myCntlPt B) {
+        super(A, s, B);
+        r = _cappedLinInterp(A.r, s, B.r, minR, maxR);
+        w = _linInterp(A.w, s, B.w);
+    }    
+    /**
+     * Interpolating constructor - equidistant between both passed points 
+     * @param A
+     * @param B
+     */
+    public myCntlPt(myCntlPt A, myCntlPt B) {     this(A, .5, B);  }
     @Override
     public myPoint set(myPoint P){super.set(P); return (myPoint)this;}
     public myCntlPt set(myCntlPt _p){super.set(_p.x,_p.y, _p.z); r = _p.r; w = _p.w; return this;}
-    private static double capInterpR(double a, double s, double b){ double res = (1-s)*a + (s)*b; res = (res < minR ? minR : res > maxR ? maxR : res); return res;}
     
     /**
      * calc the rotation of this point by angle a around G on plane described by I, in direction inferred by J(tangent)
