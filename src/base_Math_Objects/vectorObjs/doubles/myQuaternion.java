@@ -1,23 +1,50 @@
 package base_Math_Objects.vectorObjs.doubles;
 
+
 public class myQuaternion {
     /**
-     * Direction
+     * Vector representation/direction
      */
-    private myVector v;
+    private myVector v = new myVector();
     /**
-     * Values
+     * Scalar quantities
      */
-    private double x,y,z,w, magn, sqMagn;
-    public myQuaternion(){v = new myVector();x=v.x;y=v.y;z=v.z; w = 0.0;_mag();    }    
-    public myQuaternion(myVector _v, double _w){v = _v;x=v.x;y=v.y;z=v.z; w = _w;    _mag();}    
-    public myQuaternion(float _x, float _y, float _z, float _w) {this(new myVector(_x,_y,_z),_w);    }
-    public myQuaternion(double _x, double _y, double _z, double _w) {this(new myVector(_x,_y,_z),_w);    }
+    private double w, magn, sqMagn;
+    /**
+     * Empty unit quat
+     */
+    public myQuaternion(){w = 1.0;_mag();    }
+    /**
+     * Vector + scalar representation
+     * @param _v
+     * @param _w
+     */
+    public myQuaternion(myVector _v, double _w){v = new myVector(_v); w = _w;    _mag();}
+    /**
+     * Builds vector representation from _x,_y,_z
+     * @param _x
+     * @param _y
+     * @param _z
+     * @param _w
+     */
+    public myQuaternion(float _x, float _y, float _z, float _w) {v = new myVector(_x,_y,_z);w = _w; _mag();  }
+    /**
+     * Builds vector representation from _x,_y,_z
+     * @param _x
+     * @param _y
+     * @param _z
+     * @param _w
+     */
+    public myQuaternion(double _x, double _y, double _z, double _w) {v = new myVector(_x,_y,_z);w = _w; _mag();  }
+    /**
+     * Copy constructor
+     * @param a
+     */
     public myQuaternion(myQuaternion a) {this(new myVector(a.v),a.w);    }
     
     //call internally whenever values change to keep vector and x,y,z values synched
-    protected void _pset(double _x, double _y, double _z, double _w){v.set(_x,_y,_z);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
-    protected void _pset(myVector _v, double _w){v.set(_v);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
+    protected void _pset(double _x, double _y, double _z, double _w){v.set(_x,_y,_z); w = _w;_mag();}
+    protected void _pset(myVector _v, double _w){v.set(_v); w = _w;_mag();}
     /**
      * given axis angle representation, convert to quaternion
      * @param theta
@@ -30,11 +57,11 @@ public class myQuaternion {
     }
     
     public double _mag(){ this.magn = Math.sqrt(this._SqMag()); return magn; }  
-    public double _SqMag(){ this.sqMagn =  ((this.x*this.x) + (this.y*this.y) + (this.z*this.z)+ (this.w*this.w)); return this.sqMagn; }                              //squared magnitude
-    public double _dot(myQuaternion q){return ((this.x*q.x) + (this.y*q.y) + (this.z*q.z)+ (this.w*q.w));}
+    public double _SqMag(){ this.sqMagn = this.v.sqMagn + (this.w*this.w); return this.sqMagn; }                              //squared magnitude
+    public double _dot(myQuaternion q){return (this.v._dot(q.v) + (this.w*q.w));}
     
-    public myQuaternion _normalize(){this._mag();if(magn==0){return this;} _pset(x/magn,y/magn,z/magn,w/magn);return this;}
-    public static myQuaternion _normalize(myQuaternion _q){_q._mag(); return new myQuaternion(_q.x/_q.magn,_q.y/_q.magn,_q.z/_q.magn,_q.w/_q.magn);}
+    public myQuaternion _normalize(){this._mag();if(magn==0){return this;} _pset(v.x/magn,v.y/magn,v.z/magn,w/magn);return this;}
+    public static myQuaternion _normalize(myQuaternion _q){_q._mag(); return new myQuaternion(_q.v.x/_q.magn,_q.v.y/_q.magn,_q.v.z/_q.magn,_q.w/_q.magn);}
     /**
      * multiply this quaternion by another quaternion -> this * q
      * @param q
@@ -88,7 +115,7 @@ public class myQuaternion {
         if (tmp.w > 1) {tmp._normalize();}                                             // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
         double thet = 2 * Math.acos(tmp.w), s = Math.sqrt(1-tmp.w*tmp.w);             // assuming quaternion normalised then w is less than 1, so term always positive.
         if (s < 0.0000001) { return new double[]{thet, 1,0,0};}                     // if s close to zero then direction of axis not important
-        else {        return new double[]{thet, tmp.x/s, tmp.y/s, tmp.z/s}; }
+        else {        return new double[]{thet, tmp.v.x/s, tmp.v.y/s, tmp.v.z/s}; }
     }//asAxisAngle
     
     private static myQuaternion _lerp(myQuaternion qa, myQuaternion qb, double t1, double t2){
@@ -113,12 +140,11 @@ public class myQuaternion {
     @Override
     public boolean equals(Object b){
         if (this == b) return true;
-        if (b instanceof myQuaternion v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z) && (this.w == v.w));}
+        if (b instanceof myQuaternion q) {return ((this.v.x == q.v.x) && (this.v.y == v.y) && (this.v.z == q.v.z) && (this.w == q.w));}
         return false;
     }
     
-    public String toString(){return "vec:"+v.toStrBrf() + "\tw:"+ String.format("%.4f",w);}    
-    public String toStringDbg(){return this.toString()+"\tx:"+x+"\ty:"+y+"\tz:"+z;}    
+    public String toString(){return "vec:"+v.toStrBrf() + "\tw:"+ String.format("%.4f",w);}  
 
 }//myQuaternion
 

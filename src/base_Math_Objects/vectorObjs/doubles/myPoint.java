@@ -111,7 +111,7 @@ public class myPoint {
      * @param p,q,r,s : 4 points to find the midpoint between
      * @return midpoint between p,q,r,s
      */
-    public static myPoint _average(myPoint p, myPoint q, myPointf r, myPointf s) {return new myPoint((p.x+q.x+r.x+s.x)/4.0f,(p.y+q.y+r.y+s.y)/4.0f,(p.z+q.z+r.z+s.z)/4.0f);} 
+    public static myPoint _average(myPoint p, myPoint q, myPoint r, myPoint s) {return new myPoint((p.x+q.x+r.x+s.x)/4.0f,(p.y+q.y+r.y+s.y)/4.0f,(p.z+q.z+r.z+s.z)/4.0f);} 
     /**
      * Static method : build the center of verticies for the array of passed points (COV)
      * @param pts : array of points
@@ -215,6 +215,22 @@ public class myPoint {
      * @param r : resulting point of element-wise addition of p + q
      */
     public static void _add(myPoint p, myPoint q, myPoint r){ myPoint result = new myPoint(p.x + q.x, p.y + q.y, p.z + q.z); r.set(result);}           //2 pt src, 1 pt dest  
+    /**
+     * Static Method : add an array of points, returning result
+     * @param pAra
+     * @return
+     */
+    public static myPoint _add(myPoint[] pAra) {
+        // aggregate to minimize magnitude calcs
+        float _x = 0, _y = 0, _z = 0;
+        for(int i=0;i<pAra.length;++i) {
+            _x += pAra[i].x;
+            _y += pAra[i].y;
+            _z += pAra[i].z;
+        }
+        return new myPoint(_x,_y,_z);
+    }//_add
+
     /**
      * subtract passed values to this point, making this point equal to result. 
      * @param _x : x coord to subtract from this.x
@@ -351,6 +367,33 @@ public class myPoint {
             u = 1.0f - v- w;        
         return new double[] {u,v,w};
     }
+
+    /**
+     * Returns array of distances from first point in given point trajectory array to each subsequent point. 
+     * @param pts array of points representing a trajectory. 
+     * @param wrap if true then last entry is length of entire closed loop back to first point, otherwise length of entire curve to final point.
+     * @return array of distances from first point to each of subsequent points
+     */
+    public static final double[] _findAllTrajPtDists(myPoint[] pts, boolean wrap){
+        double[] res = new double[pts.length+1];
+        res[0]=0;
+        for(int i=1; i<pts.length; ++i){res[i] = res[i-1] + _dist(pts[i-1],pts[i]);}
+        if(wrap){res[pts.length] = res[pts.length-1] + _dist(pts[pts.length-1],pts[0]); } 
+        else {res[pts.length] = res[pts.length-1];}        
+        return res;
+     }
+    /**
+     * Returns length of curve described by array of points
+     * @param pts array of points describing the curve we want the length of.
+     * @param closed whether the array is a closed loop or not
+     * @return the length of either the closed loop or open trajectory described by the given array of points.
+     */
+    public static final double _getLengthOfTraj(myPoint[] pts, boolean closed){
+        double res = 0;
+        for(int i=0;i<pts.length-1;++i) {res += _dist(pts[i],pts[i+1]);}
+        if(closed) {res += _dist(pts[pts.length-1], pts[0]);}
+        return res;
+    }
     
     /**
      * given control points and passed normalized barycentric coordinates, calculate resultant point
@@ -358,7 +401,7 @@ public class myPoint {
      * @param pointNBC
      * @return
      */    
-    public static final myPoint calcPointFromNormBaryCoords(myPoint[] cntlPts, double[] pointNBC) {
+    public static final myPoint _calcPointFromNormBaryCoords(myPoint[] cntlPts, double[] pointNBC) {
         myPoint res = new myPoint();
         for(int i=0;i<pointNBC.length;++i) {    res._add(myPoint._mult(cntlPts[i], pointNBC[i]));}    
         return res;
@@ -375,6 +418,7 @@ public class myPoint {
     public myPoint rotMeAroundPt(double a, myVector I, myVector J, myPoint G) {
         double x= myVector._dot(new myVector(G,this),myVector._unit(I)), y=myVector._dot(new myVector(G,this),myVector._unit(J)); 
         double c=Math.cos(a), s=Math.sin(a); 
+        // subtract G == (x, y) from result for translation to origin 
         double iXVal = x*c-x-y*s, jYVal= x*s+y*c-y;            
         return myPoint._add(this,iXVal,I,jYVal,J); 
     }

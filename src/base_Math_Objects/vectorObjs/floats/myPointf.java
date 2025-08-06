@@ -221,18 +221,33 @@ public class myPointf {
      */
     public static myPointf _add(myPointf p, myPointf q){return new myPointf(p.x + q.x, p.y + q.y, p.z + q.z); }
     /**
-     * Static Method : add two points (one being a double-based point), putting result in 3rd argument
+     * Static Method : add two points (one being a double-based point)
      * @param p : double-based point to add
      * @param q : float-based point to add
      * @return resulting point of element-wise addition of p + q
      */
     public static myPointf _add(myPoint p, myPointf q){return new myPointf(p.x + q.x, p.y + q.y, p.z + q.z); }
     /**
-     * Static Method : add two points and return result
+     * Static Method : add two points, putting result in 3rd argument
      * @param p,q : points to add
      * @param r : resulting point of element-wise addition of p + q
      */
     public static void _add(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x + q.x, p.y + q.y, p.z + q.z); r.set(result);}           //2 pt src, 1 pt dest  
+    /**
+     * Static Method : add an array of points, returning result
+     * @param pAra
+     * @return
+     */
+    public static myPointf _add(myPointf[] pAra) {
+        // aggregate to minimize magnitude calcs
+        float _x = 0, _y = 0, _z = 0;
+        for(int i=0;i<pAra.length;++i) {
+            _x += pAra[i].x;
+            _y += pAra[i].y;
+            _z += pAra[i].z;
+        }
+        return new myPointf(_x,_y,_z);
+    }//_add
     /**
      * subtract passed values to this point, making this point equal to result. 
      * @param _x : x coord to subtract from this.x
@@ -372,6 +387,34 @@ public class myPointf {
             u = 1.0f - v- w;        
         return new float[] {u,v,w};
     }
+
+    /**
+     * Returns array of distances from first point in given point trajectory array to each subsequent point. 
+     * @param pts array of points representing a trajectory. 
+     * @param wrap if true then last entry is length of entire closed loop back to first point, otherwise length of entire curve to final point.
+     * @return array of distances from first point to each of subsequent points
+     */
+    public static final float[] _findAllPtDists(myPointf[] pts, boolean wrap){
+        float[] res = new float[pts.length+1];
+        res[0]=0;
+        for(int i=1; i<pts.length; ++i){res[i] = res[i-1] + myPointf._dist(pts[i-1],pts[i]);}
+        if(wrap){res[pts.length] = res[pts.length-1] + myPointf._dist(pts[pts.length-1],pts[0]); } 
+        else {res[pts.length] = res[pts.length-1];}        
+        return res;
+     }
+    
+    /**
+     * Returns length of curve described by array of points
+     * @param pts array of points describing the curve we want the length of.
+     * @param closed whether the array is a closed loop or not
+     * @return the length of either the closed loop or open trajectory described by the given array of points.
+     */
+    public static final float _getLengthOfTraj(myPointf[] pts, boolean closed){
+        float res = 0;
+        for(int i=0;i<pts.length-1;++i) {res += _dist(pts[i],pts[i+1]);}
+        if(closed) {res += _dist(pts[pts.length-1], pts[0]);}
+        return res;
+    }
     
     /**
      * given control points and passed normalized barycentric coordinates, calculate resultant point
@@ -379,7 +422,7 @@ public class myPointf {
      * @param pointNBC
      * @return
      */    
-    public static final myPointf calcPointFromNormBaryCoords(myPointf[] cntlPts, float[] pointNBC) {
+    public static final myPointf _calcPointFromNormBaryCoords(myPointf[] cntlPts, float[] pointNBC) {
         myPointf res = new myPointf();
         for(int i=0;i<pointNBC.length;++i) {    res._add(myPointf._mult(cntlPts[i], pointNBC[i]));}    
         return res;
@@ -395,7 +438,8 @@ public class myPointf {
      */
     public myPointf rotMeAroundPt(float a, myVectorf I, myVectorf J, myPointf G) {
         double x= myVectorf._dot(new myVectorf(G,this),myVectorf._unit(I)), y=myVectorf._dot(new myVectorf(G,this),myVectorf._unit(J)); 
-        double c=Math.cos(a), s=Math.sin(a); 
+        double c=Math.cos(a), s=Math.sin(a);
+        // subtract G == (x, y) from result for translation to origin 
         float iXVal = (float) (x*c-x-y*s), jYVal= (float) (x*s+y*c-y);            
         return myPointf._add(this,iXVal,I,jYVal,J); 
     }

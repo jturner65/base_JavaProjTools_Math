@@ -1,17 +1,49 @@
 package base_Math_Objects.vectorObjs.floats;
 
 public class myQuaternionf {
-    myVectorf v;
-    public float x,y,z,w,  magn, sqMagn;
-    public myQuaternionf(){v = new myVectorf();x=v.x;y=v.y;z=v.z; w = 0.0f;_mag();}    
-    public myQuaternionf(myVectorf _x, float _w){v = _x;x=v.x;y=v.y;z=v.z;    w = _w; _mag();    }    
-    public myQuaternionf(float _x, float _y, float _z, float _w) {this(new myVectorf(_x,_y,_z),_w);    }
-    public myQuaternionf(double _x, double _y, double _z, double _w) {this(new myVectorf(_x,_y,_z),(float)_w);    }
+    /**
+     * Vector representation/direction
+     */
+    myVectorf v = new myVectorf();
+    /**
+     * Scalar quantities
+     */
+    public float w,  magn, sqMagn;
+    /**
+     * Empty unit quat
+     */
+    public myQuaternionf(){w = 1.0f;_mag();}
+    /**
+     * Vector + scalar representation
+     * @param _v
+     * @param _w
+     */
+    public myQuaternionf(myVectorf _v, float _w){v = new myVectorf(_v);  w = _w; _mag();    } 
+    /**
+     * Builds vector representation from _x,_y,_z
+     * @param _x
+     * @param _y
+     * @param _z
+     * @param _w
+     */
+    public myQuaternionf(float _x, float _y, float _z, float _w) {v = new myVectorf(_x,_y,_z); w = _w; _mag();    }
+    /**
+     * Builds vector representation from _x,_y,_z
+     * @param _x
+     * @param _y
+     * @param _z
+     * @param _w
+     */
+    public myQuaternionf(double _x, double _y, double _z, double _w) {v = new myVectorf(_x,_y,_z); w = (float) _w; _mag();   }
+    /**
+     * Copy constructor
+     * @param a
+     */
     public myQuaternionf(myQuaternionf a) {this(new myVectorf(a.v),a.w);    }    
     
     //call internally whenever values change to keep vector and x,y,z values synched
-    protected void _pset(float _x, float _y, float _z, float _w){v.set(_x,_y,_z);x=v.x;y=v.y;z=v.z; w = _w;_mag();}
-    protected void _pset(myVectorf _v, float _w){v.set(_v);x=v.x;y=v.y;z=v.z; w = _w;_mag();}    
+    protected void _pset(float _x, float _y, float _z, float _w){v.set(_x,_y,_z); w = _w;_mag();}
+    protected void _pset(myVectorf _v, float _w){v.set(_v); w = _w;_mag();}    
     /**
      * given axis angle representation, convert to quaternion
      * @param theta
@@ -24,11 +56,11 @@ public class myQuaternionf {
     }
     //
     public float _mag(){ this.magn = (float)Math.sqrt(this._SqMag()); return magn; }  
-    public float _SqMag(){ this.sqMagn =  ((this.x*this.x) + (this.y*this.y) + (this.z*this.z)+ (this.w*this.w)); return this.sqMagn; }                              //squared magnitude
-    public float _dot(myQuaternionf q){return ((this.x*q.x) + (this.y*q.y) + (this.z*q.z)+ (this.w*q.w));}
+    public float _SqMag(){ this.sqMagn = this.v.sqMagn + (this.w*this.w); return this.sqMagn; }                             //squared magnitude
+    public float _dot(myQuaternionf q){return (this.v._dot(q.v) + (this.w*q.w));}
 
-    public myQuaternionf _normalize(){this._mag();if(magn==0){return this;} _pset(x/magn,y/magn,z/magn,w/magn);return this;}
-    public static myQuaternionf _normalize(myQuaternionf _v){_v._mag(); return new myQuaternionf(_v.x/_v.magn,_v.y/_v.magn,_v.z/_v.magn,_v.w/_v.magn);}
+    public myQuaternionf _normalize(){this._mag();if(magn==0){return this;}_pset(v.x/magn,v.y/magn,v.z/magn,w/magn);return this;}
+    public static myQuaternionf _normalize(myQuaternionf _q){_q._mag(); return new myQuaternionf(_q.v.x/_q.magn,_q.v.y/_q.magn,_q.v.z/_q.magn,_q.w/_q.magn);}
     //multiply this quaternion by another quaternion -> this * q
     public myQuaternionf _qmult(myQuaternionf q){
         //w1v2 + w2v1 + v1.cross(v2)
@@ -63,7 +95,7 @@ public class myQuaternionf {
         if (tmp.w > 1) {tmp._normalize();}                                                         
         float thet = 2 * (float)Math.acos(tmp.w),s = (float)Math.sqrt(1-tmp.w*tmp.w);             
         if (s < 0.0000001) { return new float[]{thet, 1,0,0};    }            //with s close to 0, thet doesn't matter 
-        else {            return new float[]{thet, tmp.x/s, tmp.y/s, tmp.z/s};   }
+        else {            return new float[]{thet, tmp.v.x/s, tmp.v.y/s, tmp.v.z/s};   }
     }//asAxisAngle
     
     private static myQuaternionf _lerp(myQuaternionf qa, myQuaternionf qb, float t1, float t2){return new myQuaternionf(myVectorf._add(myVectorf._mult(qa.v,t1), myVectorf._mult(qb.v,t2)), (qa.w * t1) + (qb.w*t2));}
@@ -87,11 +119,10 @@ public class myQuaternionf {
     @Override
     public boolean equals(Object b){
         if (this == b) return true;
-        if (b instanceof myQuaternionf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z) && (this.w == v.w));}
+        if (b instanceof myQuaternionf q) {return ((this.v.x == q.v.x) && (this.v.y == q.v.y) && (this.v.z == q.v.z) && (this.w == q.w));}
         return false;
     }
     
-    public String toString(){return "vec:"+v.toStrBrf() + "\t w:"+ String.format("%.4f",w);}    
-    public String toStringDbg(){return this.toString()+"\tx:"+x+"\ty:"+y+"\tz:"+z;}    
+    public String toString(){return "vec:"+v.toStrBrf() + "\t w:"+ String.format("%.4f",w);} 
     
 }//myQuaternionf
