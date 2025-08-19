@@ -20,7 +20,7 @@ public class MyMathUtils {
     /**
      * Useful double constants
      */
-    public static double
+    public static final double
         THIRD = 1.0/3.0,
         PI = Math.PI,
         QUARTER_PI = .25*PI,
@@ -42,7 +42,7 @@ public class MyMathUtils {
     /**
      * Useful float constants
      */
-    public static float 
+    public static final float 
         THIRD_F = 1.0f/3.0f,
         PI_F = (float)PI,
         QUARTER_PI_F = (float)QUARTER_PI,
@@ -63,33 +63,33 @@ public class MyMathUtils {
     
 
     // numbers greater than 10^MAX_DIGITS_10 or e^MAX_DIGITS_EXP are considered unsafe ('too big') for floating point operations
-    protected static int MAX_DIGITS_EXP = 677;
-    protected static int MAX_DIGITS_10 = 294; // ~ MAX_DIGITS_EXP/LN(10)
-    protected static int MAX_DIGITS_2 = 977; // ~ MAX_DIGITS_EXP/LN(2)
+    protected static final int MAX_DIGITS_EXP = 677;
+    protected static final int MAX_DIGITS_10 = 294; // ~ MAX_DIGITS_EXP/LN(10)
+    protected static final int MAX_DIGITS_2 = 977; // ~ MAX_DIGITS_EXP/LN(2)
         
     /**
      * # of pre-computed cosine and sine values.  
      */
-    public static float numTrigVals = 36.0f;
+    public static final float numTrigVals = 36.0f;
     /**
      * Pre-computed array of {@value #numTrigVals} cosine values 0->2pi
      */
-    public static double[] preCalcCosVals;
+    public static final double[] preCalcCosVals;
     /**
      * Pre-computed array of {@value #numTrigVals} sine values 0->2pi
      */
-    public static double[] preCalcSinVals;
+    public static final double[] preCalcSinVals;
     
-    private static float deltaThet = TWO_PI_F/numTrigVals,
+    private static final float deltaThet = TWO_PI_F/numTrigVals,
             finalThet = TWO_PI_F+deltaThet;
     /**
      * Pre-computed array of {@value #numTrigVals} float cosine values 0->2pi
      */
-    public static float[] preCalcCosVals_f;
+    public static final float[] preCalcCosVals_f;
     /**
      * Pre-computed array of {@value #numTrigVals} float sine values 0->2pi
      */
-    public static float[] preCalcSinVals_f;
+    public static final float[] preCalcSinVals_f;
     
     /**
      * Build arrays of precomputed sine and cosine values
@@ -192,49 +192,48 @@ public class MyMathUtils {
     //public static int O_FWD = 0, O_RHT = 1,  O_UP = 2;
     /**
      * build axis angle orientation from passed orientation matrix
-     * @param orientation array of 3 vectors corresponding to orientation vectors
+     * @param orientation array of 3 vectors corresponding to orientation vectors (assumes this is a legal rotation matrix)
      * @param O_FWD idx of forward orientation
      * @param O_RHT idx of right orientation
      * @param O_UP idx of up orientation
-     * @return axis-angle representation of orientation
+     * @return axis-angle representation of orientation : [angle, axisX, axisY, axisZ]
      */
     public static float[] toAxisAngle(myVectorf[] orientation, int O_FWD, int O_RHT, int O_UP) {
-        float angle,s,x=INV_SQRT_2_F,y=INV_SQRT_2_F,z=INV_SQRT_2_F;
+        float angle,x=INV_SQRT_2_F,y=INV_SQRT_2_F,z=INV_SQRT_2_F;
         float fyrx = -orientation[O_FWD].y+orientation[O_RHT].x,
             uxfz = -orientation[O_UP].x+orientation[O_FWD].z,
             rzuy = -orientation[O_RHT].z+orientation[O_UP].y;
-        float epsValCalcSq = EPS_F*EPS_F;
-        if (((fyrx*fyrx) < epsValCalcSq) && ((uxfz*uxfz) < epsValCalcSq) && ((rzuy*rzuy) < epsValCalcSq)) {            //checking for rotational singularity
-            // angle == 0
+        //verify not near-symmetric
+        if (((fyrx*fyrx) < EPS_F_SQ) && ((uxfz*uxfz) < EPS_F_SQ) && ((rzuy*rzuy) < EPS_F_SQ)) {            
+            //checking for rotational singularity
+            // angle == 0 or pi
             float fyrx2 = orientation[O_FWD].y+orientation[O_RHT].x,
                 fzux2 = orientation[O_FWD].z+orientation[O_UP].x,
                 rzuy2 = orientation[O_RHT].z+orientation[O_UP].y,
                 fxryuz3 = orientation[O_FWD].x+orientation[O_RHT].y+orientation[O_UP].z-3;
-            if (((fyrx2*fyrx2) < 1)    && (fzux2*fzux2 < 1) && ((rzuy2*rzuy2) < 1) && ((fxryuz3*fxryuz3) < 1)) {    return new float[]{0,1,0,0}; }
-            // angle == pi
+            // If this is true, then angle is 0
+            if (((fyrx2*fyrx2) < 0.1f) && (fzux2*fzux2 < 0.1f) && ((rzuy2*rzuy2) < 0.1f) && ((fxryuz3*fxryuz3) < 0.1f)) {return new float[]{0,1,0,0}; }
+            // else angle == pi
             angle = PI_F;
-            float fwd2x = (orientation[O_FWD].x+1)/2.0f,rht2y = (orientation[O_RHT].y+1)/2.0f,up2z = (orientation[O_UP].z+1)/2.0f,
-                fwd2y = fyrx2/4.0f, fwd2z = fzux2/4.0f, rht2z = rzuy2/4.0f;
+            float fwd2x = (orientation[O_FWD].x+1)/2.0f,
+                    rht2y = (orientation[O_RHT].y+1)/2.0f,
+                    up2z = (orientation[O_UP].z+1)/2.0f,
+                    fwd2y = fyrx2/4.0f, 
+                    fwd2z = fzux2/4.0f, 
+                    rht2z = rzuy2/4.0f;
             if ((fwd2x > rht2y) && (fwd2x > up2z)) { // orientation[O_FWD].x is the largest diagonal term
-                if (fwd2x< EPS_F) {    x = 0;} else {            x = (float) Math.sqrt(fwd2x);y = fwd2y/x;z = fwd2z/x;} 
+                if (fwd2x< EPS_F) {     x = 0;} else {      x = (float) Math.sqrt(fwd2x);   y = fwd2y/x;    z = fwd2z/x;} 
             } else if (rht2y > up2z) {         // orientation[O_RHT].y is the largest diagonal term
-                if (rht2y< EPS_F) {    y = 0;} else {            y = (float) Math.sqrt(rht2y);x = fwd2y/y;z = rht2z/y;}
+                if (rht2y< EPS_F) {     y = 0;} else {      y = (float) Math.sqrt(rht2y);   x = fwd2y/y;    z = rht2z/y;}
             } else { // orientation[O_UP].z is the largest diagonal term so base result on this
-                if (up2z< EPS_F) {    z = 0;} else {            z = (float) Math.sqrt(up2z);    x = fwd2z/z;y = rht2z/z;}
+                if (up2z< EPS_F) {      z = 0;} else {      z = (float) Math.sqrt(up2z);    x = fwd2z/z;    y = rht2z/z;}
             }
             return new float[]{angle,x,y,z}; // return 180 deg rotation
         }
         //no singularities - handle normally
-        myVectorf tmp = new myVectorf(rzuy, uxfz, fyrx);
-        s = tmp.magn;
-        if (s < EPS_F){ s=1; }
-        tmp._scale(s);//changes mag to s
-            // prevent divide by zero, should not happen if matrix is orthogonal -- should be caught by singularity test above
-        angle = (float) -Math.acos(( orientation[O_FWD].x + orientation[O_RHT].y + orientation[O_UP].z - 1)/2.0);
-        
-        //consume this as follows : 
-        //p.rotate(O_axisAngle[0],O_axisAngle[1],O_axisAngle[2],O_axisAngle[3]);
-        
+        myVectorf tmp = new myVectorf(rzuy, uxfz, fyrx)._normalize();
+        // (Trace(orientation) - 1)/2.0
+        angle = (float) Math.acos(( orientation[O_FWD].x + orientation[O_RHT].y + orientation[O_UP].z - 1)/2.0);        
        return new float[]{angle,tmp.x,tmp.y,tmp.z};
     }//toAxisAngle
     
@@ -273,7 +272,7 @@ public class MyMathUtils {
         return x;
     }
     /**
-     * double version of Kahan (quake) sqrt approx - can be up to 30% faster than Math lib
+     * double version of Kahan (quake) inv sqrt approx - can be up to 30% faster than Math lib
      * @param x
      * @return
      */
@@ -526,15 +525,74 @@ public class MyMathUtils {
      * @param x
      * @return
      */
-    public static int floor(float x){    return x>=0 ? (int)x : (int)x-1;} 
+    public static int floor(float x){        if(x==(int)x) {return (int)x;} return x>=0 ? (int)x : (int)x-1;} 
      
     /**
      * Floor of passed double
      * @param x
      * @return
      */
-    public static int floor(double x){ return x>=0 ? (int)x : (int)x-1;} 
+    public static long floor(double x){     if(x==(long)x) {return (long)x;} return x>=0 ? (long)x : (long)x-1L;} 
     
+    /**
+     * Return clipped value for x to be between a and b inclusive
+     * @param x
+     * @param a
+     * @param b
+     * @return
+     */
+    public static int clip(int x, int a, int b) { 
+        if(a>b) {return max(b, min(x, a));} 
+        return max(a, min(x, b));
+    }
+    
+    /**
+     * Return clipped value for x to be between min and max inclusive
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static long clip(long x, long a, long b) {
+        if(a>b) {return max(b, min(x, a));} 
+        return max(a, min(x, b));
+    }
+    
+    /**
+     * Return clipped value for x to be between min and max inclusive
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static float clip(float x, float a, float b) {
+        if(a>b) {return max(b, min(x, a));} 
+        return max(a, min(x, b));
+    }
+    
+    /**
+     * Return clipped value for x to be between min and max inclusive
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static double clip(double x, double a, double b) {
+        if(a>b) {return max(b, min(x, a));} 
+        return max(a, min(x, b));
+    }
+    
+    /**
+     * Return clipped value for x to be between min and max inclusive
+     * @param x
+     * @param min
+     * @param max
+     * @return
+     */
+    public static <T extends Comparable<T>> T clip (T x, T a, T b) {
+        if(a.compareTo(b) > 0) {return max(b, min(x, a));} 
+        return max(a, min(x, b));
+    }
     /**
      * Return max of 2 ints
      * @param x
@@ -768,6 +826,151 @@ public class MyMathUtils {
     public static <T extends Comparable<T>> T min(T x, T y, T z) {      return min(min(x,y),z);     }
     
     /**
+     * Unbounded interpolation between ints @param a and @param b by @param s (s can be less than 0 or greater than 1) 
+     * @param a 
+     * @param s
+     * @param b
+     * @return
+     */
+    public static int interpInt(int a, double s, int b) {return (int)((1-s)*a + s*b);}
+    /**
+     * Unbounded interpolation between longs @param a and @param b by @param s (s can be less than 0 or greater than 1) 
+     * @param a 
+     * @param s
+     * @param b
+     * @return
+     */
+    public static long interpLong(long a, double s, long b) {return (long)((1-s)*a + s*b);}      
+    /**
+     * Unbounded interpolation between ints @param a and @param b by @param s (s can be less than 0 or greater than 1) 
+     * @param a 
+     * @param s
+     * @param b
+     * @return
+     */
+    public static float interpFloat(float a, double s, float b) {return (float)((1-s)*a + s*b);}
+    /**
+     * Unbounded interpolation between longs @param a and @param b by @param s (s can be less than 0 or greater than 1) 
+     * @param a 
+     * @param s
+     * @param b
+     * @return
+     */
+    public static double interpDouble(double a, double s, double b) {return (1-s)*a + s*b;}
+    
+    /**
+     * Unbounded interpolation between 2 arrays of ints by @param s. (s can be less than 0 or greater than 1) 
+     * Arrays do not have to be the same size - 0 is used for missing smaller array values
+     * 
+     * @param a
+     * @param s
+     * @param b
+     * @return
+     */
+    public static int[] interpArray(int[] a, double s, int[] b) {
+        if (a.length == b.length) {
+            int[] res = new int[a.length];
+            for(int i=0;i<a.length;++i) {res[i]=interpInt(a[i], s, b[i]);}
+            return res;            
+        }
+        // bigAra will be in first location, smallAra will be in second
+        int[] bigAra, smallAra;
+        // interpolant to use - either s if a is bigger or -s + 1 if be is bigger
+        double extS;
+        if(a.length > b.length) {   bigAra = a; smallAra = b; extS = s;}
+        else {                      bigAra = b; smallAra = a; extS = -1*s +1;}
+        // put bigAra in first location always       
+        int[] res = new int[bigAra.length];
+        for(int i=0;i<smallAra.length;++i) {                res[i]=interpInt(bigAra[i], extS, smallAra[i]);}
+        for(int i=smallAra.length;i<bigAra.length;++i) {    res[i]=interpInt(bigAra[i], extS, 0);}
+        return res;        
+    }//interpArray
+    
+    /**
+     * Unbounded interpolation between 2 arrays of longs by @param s. (s can be less than 0 or greater than 1) 
+     * Arrays do not have to be the same size - 0 is used for missing smaller array values
+     * 
+     * @param a
+     * @param s
+     * @param b
+     * @return
+     */
+    public static long[] interpArray(long[] a, double s, long[] b) {
+        if (a.length == b.length) {
+            long[] res = new long[a.length];
+            for(int i=0;i<a.length;++i) {res[i]=interpLong(a[i], s, b[i]);}
+            return res;            
+        }
+        // bigAra will be in first location, smallAra will be in second
+        long[] bigAra, smallAra;
+        // interpolant to use - either s if a is bigger or -s + 1 if be is bigger
+        double extS;
+        if(a.length > b.length) {   bigAra = a; smallAra = b; extS = s;}
+        else {                      bigAra = b; smallAra = a; extS = -1*s +1;}
+        // put bigAra in first location always       
+        long[] res = new long[bigAra.length];
+        for(int i=0;i<smallAra.length;++i) {                res[i]=interpLong(bigAra[i], extS, smallAra[i]);}
+        for(int i=smallAra.length;i<bigAra.length;++i) {    res[i]=interpLong(bigAra[i], extS, 0);}
+        return res;        
+    }//interpArray  
+    
+    /**
+     * Unbounded interpolation between 2 arrays of floats by @param s. (s can be less than 0 or greater than 1) 
+     * Arrays do not have to be the same size - 0 is used for missing smaller array values
+     * 
+     * @param a
+     * @param s
+     * @param b
+     * @return
+     */
+    public static float[] interpArray(float[] a, double s, float[] b) {
+        if (a.length == b.length) {
+            float[] res = new float[a.length];
+            for(int i=0;i<a.length;++i) {res[i]=interpFloat(a[i], s, b[i]);}
+            return res;            
+        }
+        // bigAra will be in first location, smallAra will be in second
+        float[] bigAra, smallAra;
+        // interpolant to use - either s if a is bigger or -s + 1 if be is bigger
+        double extS;
+        if(a.length > b.length) {   bigAra = a; smallAra = b; extS = s;}
+        else {                      bigAra = b; smallAra = a; extS = -1*s +1;}
+        // put bigAra in first location always       
+        float[] res = new float[bigAra.length];
+        for(int i=0;i<smallAra.length;++i) {                res[i]=interpFloat(bigAra[i], extS, smallAra[i]);}
+        for(int i=smallAra.length;i<bigAra.length;++i) {    res[i]=interpFloat(bigAra[i], extS, 0);}
+        return res;        
+    }//interpArray  
+    
+    /**
+     * Unbounded interpolation between 2 arrays of doubles by @param s. (s can be less than 0 or greater than 1) 
+     * Arrays do not have to be the same size - 0 is used for missing smaller array values
+     * 
+     * @param a
+     * @param s
+     * @param b
+     * @return
+     */
+    public static double[] interpArray(double[] a, double s, double[] b) {
+        if (a.length == b.length) {
+            double[] res = new double[a.length];
+            for(int i=0;i<a.length;++i) {res[i]=interpDouble(a[i], s, b[i]);}
+            return res;            
+        }
+        // bigAra will be in first location, smallAra will be in second
+        double[] bigAra, smallAra;
+        // interpolant to use - either s if a is bigger or -s + 1 if be is bigger
+        double extS;
+        if(a.length > b.length) {   bigAra = a; smallAra = b; extS = s;}
+        else {                      bigAra = b; smallAra = a; extS = -1*s +1;}
+        // put bigAra in first location always       
+        double[] res = new double[bigAra.length];
+        for(int i=0;i<smallAra.length;++i) {                res[i]=interpDouble(bigAra[i], extS, smallAra[i]);}
+        for(int i=smallAra.length;i<bigAra.length;++i) {    res[i]=interpDouble(bigAra[i], extS, 0);}
+        return res;        
+    }//interpArray
+    
+    /**
      * Range checking of value, as double
      * @param x x value to check
      * @param min minimum x value (inclusive)
@@ -943,7 +1146,6 @@ public class MyMathUtils {
         for(int i=0;i<len;++i) {if((vals[i].compareTo(mins[i]) < 0)  || (vals[i].compareTo(maxs[i]) > 0)){    return false;}}
         return true;
     }
-     
     
     /**
      * point normal form of plane - give a normal and a point and receive a 4-element array of the coefficients of the plane equation.
@@ -1255,6 +1457,49 @@ public class MyMathUtils {
         return t2 > 0 ? t2 : t1;    
         //return ((t1 > 0) && (t2 > 0) ? min(t1, t2) : ((t1 < 0 ) ? ((t2 < 0 ) ?-1 : t2) : t1) );
     }    
+    
+    ////////////////////////////////////////////
+    /// Array to/from Hex color conversions   
+    /**
+     * Takes argb color in hex, and converts to array of [0-255] ints for r,g,b,alpha
+     * @param argb hex color of format 0xAARRGGBB
+     * @return array of [0-255] ints with 3 colors r,g,b if no alpha given, or 
+     * 4 colors r,g,b,alpha if alpha present and non-zero
+     */
+    public static int[] getClrFromHex(int argb) {
+        int b = argb & 0xFF;
+        int tmpRgb = argb>>8;
+        int g = tmpRgb & 0xFF;
+        tmpRgb >>= 8;
+        int r = tmpRgb & 0xFF;
+        tmpRgb >>= 8;
+        tmpRgb &= 0xFF;
+        //alpha value
+        if (tmpRgb > 0) {
+            return new int[] {r,g,b,tmpRgb};
+        }
+        // No alpha given, so 3 element array r,g,b
+        return new int[] {r,g,b};
+    }//getClrFromHex
+    
+    /**
+     * Returns ARGB hex value of passed color values. Assumes r,g,b are all 0-255 range (forces alpha to 255)
+     * Mod 256 is performed on all values, so all rgb values should be [0,255]
+     */
+    public static int getClrAsHex(int r, int g, int b) {
+        return 0xFF000000 + (r & 0xFF)<<16 + (g & 0xFF) << 8 + (b & 0xFF);
+    }
+    
+    /**
+     * Returns ARGB hex value of passed color values. Assumes r,g,b,alpha are all 0-255 range
+     * Mod 256 is performed on all values, so all rgb values should be [0,255]
+     */
+    public static int getClrAsHex(int r, int g, int b, int alpha) {
+        int res = (alpha > 0) ? ((alpha & 0xFF)<<24) : 0;
+        //if (alpha > 0){res = ((alpha & 0xFF)<<24);}//A
+        return res + ((r & 0xFF)<<16) + ((g & 0xFF) << 8) + (b & 0xFF);
+    }
+    
     
     ////////////////////////////////////////////
     /// Synchronized Random functions

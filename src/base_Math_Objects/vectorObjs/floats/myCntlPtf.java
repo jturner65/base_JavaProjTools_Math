@@ -37,8 +37,9 @@ public class myCntlPtf extends myPointf {
      */
     public myCntlPtf(myCntlPtf A, float s, myCntlPtf B) {
         super(A, s, B);
-        r = _cappedLinInterp(A.r, s, B.r, minR, maxR);
-        w = _linInterp(A.w, s, B.w);
+        r = A.r+s*(B.r-A.r);
+        r = (r < minR ? minR : r > maxR ? maxR : r);// _cappedLinInterp(A.r, s, B.r, minR, maxR);
+        w = A.w+s*(B.w-A.w);//_linInterp(A.w, s, B.w);
     }    
     /**
      * Interpolating constructor - equidistant between both passed points 

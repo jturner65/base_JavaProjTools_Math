@@ -26,14 +26,14 @@ public class myPointf {
      * @param _y : y coord
      * @param _z : z coord
      */
-    public myPointf(float _x, float _y, float _z){this.x = _x; this.y = _y; this.z = _z;}         //constructor 3 args  
+    public myPointf(float _x, float _y, float _z){this.x = _x; this.y = _y; this.z = _z;}
     /**
      * build a point with given coordinates(as doubles)
      * @param _x : x coord
      * @param _y : y coord
      * @param _z : z coord
      */
-    public myPointf(double _x, double _y, double _z){this.x = (float) _x; this.y = (float) _y; this.z = (float) _z;}         //constructor 3 args  
+    public myPointf(double _x, double _y, double _z){this.x = (float) _x; this.y = (float) _y; this.z = (float) _z;}   
     /**
      * Build a point using the first 3 values in the passed array. Will fail if less than 3 values.
      * @param vals must be 3+ values in length. Any values past the first 3 will be ignored.
@@ -48,7 +48,7 @@ public class myPointf {
      * copy constructor
      * @param p : point object to copy
      */
-    public myPointf(myPointf p){ this(p.x, p.y, p.z); }                                                                                                               //constructor 1 arg  
+    public myPointf(myPointf p){ this(p.x, p.y, p.z); }                                                                
     /**
      * build point as displacement from point A by vector B
      * @param A : starting point
@@ -61,11 +61,11 @@ public class myPointf {
      * @param s : value [0,1] to determine linear interpolation
      * @param B : second point to interpolate from
      */
-    public myPointf(myPointf A, float s, myPointf B) {  this(_linInterp(A.x, s, B.x), _linInterp(A.y, s, B.y), _linInterp(A.z, s, B.z)); };        //builds a point somewhere in between a and b
+    public myPointf(myPointf A, float s, myPointf B) {  this(A.x+s*(B.x-A.x),A.y+s*(B.y-A.y),A.z+s*(B.z-A.z)); };
     /**
      * empty constructor
      */
-    public myPointf(){ this(0,0,0);}                                                                                                                               //constructor 0 args
+    public myPointf(){ this(0,0,0);}                                                                                   
     /**
      * clear this point's set values
      */
@@ -74,18 +74,18 @@ public class myPointf {
      * Set this object's coordinate values
      * @param _x, _y, _z : new x,y,z coords of this object
      */
-    public void set(float _x, float _y, float _z){ this.x = _x;  this.y = _y;  this.z = _z; }                                               //set 3 args 
+    public void set(float _x, float _y, float _z){ this.x = _x;  this.y = _y;  this.z = _z; }                          
     /**
      * Set this object's coordinate values (converting from doubles)
      * @param _x, _y, _z : new x,y,z coords of this object
      */
-    public void set(double _x, double _y, double _z){ this.set((float)_x,(float)_y,(float)_z); }                                               //set 3 args 
+    public void set(double _x, double _y, double _z){ this.set((float)_x,(float)_y,(float)_z); }                       
     /**
      * Set this point's values as a copy of the passed point
      * @param p : the point to copy
      * @return this point
      */
-    public myPointf set(myPointf p){ this.x = p.x; this.y = p.y; this.z = p.z; return this;}                                                                   //set 1 args
+    public myPointf set(myPointf p){ this.x = p.x; this.y = p.y; this.z = p.z; return this;}                           
     /**
      * build and return the average (midpoint) of this point and the passed point
      * @param q : the point to find the midpoint with
@@ -133,26 +133,26 @@ public class myPointf {
      * @param n : value to scale this vector by
      * @return this point, after scaling
      */
-    public myPointf _mult(float n){ this.x *= n; this.y *= n; this.z *= n; return this; }                                                     //_mult 3 args  
+    public myPointf _mult(float n){ this.x *= n; this.y *= n; this.z *= n; return this; }
     /**
      * Static method : return result of multiplying a point by a scalar
      * @param p : point to be scaled
      * @param n : scale value (to multiply)
      * @return point result of element-wise multiplication of p by n
      */
-    public static myPointf _mult(myPointf p, float n){ return new myPointf(p.x * n, p.y * n, p.z * n);}                          //1 pt, 1 double
+    public static myPointf _mult(myPointf p, float n){ return new myPointf(p.x * n, p.y * n, p.z * n);}
     /**
      * Static method : element-wise multiplication of two points, returning result
      * @param p,q : two points to multiply element-wise with each other
      * @return : element-wise product of p and q : (p.x * q.x) i + (p.y*q.y) j + (p.z*q.z) k
      */
-    public static myPointf _mult(myPointf p, myPointf q){ return new myPointf(p.x *q.x, p.y * q.y, p.z * q.z);}           //return elementwise product
+    public static myPointf _mult(myPointf p, myPointf q){ return new myPointf(p.x *q.x, p.y * q.y, p.z * q.z);}
     /**
      * Static method : element-wise multiplication of two points, returning result
      * @param p,q : two points to element-wise multiply
      * @param r : destination for result of element-wise multiplication
      */
-    public static void _mult(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x *q.x, p.y * q.y, p.z * q.z); r.set(result);}           //2 pt src, 1 pt dest      
+    public static void _mult(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x *q.x, p.y * q.y, p.z * q.z); r.set(result);}    
     /**
      * divide this point by q, making this point equal to result.  No value checking is performed
      * @param q scalar value to divide this point by
@@ -164,14 +164,14 @@ public class myPointf {
      * @param n : value to divide p by
      * @return point result of per-element division of p by n
      */
-    public static myPointf _div(myPointf p, float n){ if(n==0) return p; return new myPointf(p.x / n, p.y / n, p.z / n);}                          //1 pt, 1 double
+    public static myPointf _div(myPointf p, float n){ if(n==0) return p; return new myPointf(p.x / n, p.y / n, p.z / n);}
     /**
      * add passed values to this point, making this point equal to result. 
      * @param _x : x coord to add to this.x
      * @param _y : y coord to add to this.y
      * @param _z : z coord to add to this.z
      */
-    public void _add(float _x, float _y, float _z){ this.x += _x; this.y += _y; this.z += _z;   }                                            //_add 3 args
+    public void _add(float _x, float _y, float _z){ this.x += _x; this.y += _y; this.z += _z;   }
     /**
      * element-wise add passed point to this point, making this point equal to result. 
      * @param v point to add to this
@@ -191,7 +191,7 @@ public class myPointf {
      * @param I : displacement vector
      * @return : O + aI
      */
-    public static myPointf _add(myPointf O, float a, myVectorf I){                                                return new myPointf(O.x+a*I.x,O.y+a*I.y,O.z+a*I.z);}                                        //2 vec
+    public static myPointf _add(myPointf O, float a, myVectorf I){                                                return new myPointf(O.x+a*I.x,O.y+a*I.y,O.z+a*I.z);}
     /**
      * Static Method : Add vector I (scaled by a) and vector J (scaled by b) to point O, returning result
      * @param O : origin point
@@ -201,7 +201,7 @@ public class myPointf {
      * @param J : displacement vector
      * @return : O + aI + bJ
      */
-    public static myPointf _add(myPointf O, float a, myVectorf I, float b, myVectorf J) {                        return new myPointf(O.x+a*I.x+b*J.x,O.y+a*I.y+b*J.y,O.z+a*I.z+b*J.z);}                      // O+xI+yJ
+    public static myPointf _add(myPointf O, float a, myVectorf I, float b, myVectorf J) {                        return new myPointf(O.x+a*I.x+b*J.x,O.y+a*I.y+b*J.y,O.z+a*I.z+b*J.z);}
     /**
      * Static Method : Add vector I (scaled by a), vector J (scaled by b) and vector K (scaled by c) to point O, returning result
      * @param O : origin point
@@ -213,7 +213,7 @@ public class myPointf {
      * @param K : displacement vector
      * @return : O + aI + bJ + cK
      */
-    public static myPointf _add(myPointf O, float a, myVectorf I, float b, myVectorf J, float c, myVectorf K) {    return new myPointf(O.x+a*I.x+b*J.x+c*K.x,O.y+a*I.y+b*J.y+c*K.y,O.z+a*I.z+b*J.z+c*K.z);} // O+xI+yJ+kZ
+    public static myPointf _add(myPointf O, float a, myVectorf I, float b, myVectorf J, float c, myVectorf K) {    return new myPointf(O.x+a*I.x+b*J.x+c*K.x,O.y+a*I.y+b*J.y+c*K.y,O.z+a*I.z+b*J.z+c*K.z);}
     /**
      * Static Method : add two points and return result
      * @param p,q : points to add
@@ -232,7 +232,7 @@ public class myPointf {
      * @param p,q : points to add
      * @param r : resulting point of element-wise addition of p + q
      */
-    public static void _add(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x + q.x, p.y + q.y, p.z + q.z); r.set(result);}           //2 pt src, 1 pt dest  
+    public static void _add(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x + q.x, p.y + q.y, p.z + q.z); r.set(result);}  
     /**
      * Static Method : add an array of points, returning result
      * @param pAra
@@ -247,19 +247,19 @@ public class myPointf {
             _z += pAra[i].z;
         }
         return new myPointf(_x,_y,_z);
-    }//_add
+    }
     /**
      * subtract passed values to this point, making this point equal to result. 
      * @param _x : x coord to subtract from this.x
      * @param _y : y coord to subtract from this.y
      * @param _z : z coord to subtract from this.z
      */
-    public void _sub(float _x, float _y, float _z){ this.x -= _x; this.y -= _y; this.z -= _z;  }                                                                   //_sub 3 args
+    public void _sub(float _x, float _y, float _z){ this.x -= _x; this.y -= _y; this.z -= _z;  }
     /**
      * element-wise subtract passed point from this point, making this point equal to result. 
      * @param v point to subtract this
      */    
-    public void _sub(myPointf v){ this.x -= v.x; this.y -= v.y; this.z -= v.z;  }                                                                           //_sub 1 arg 
+    public void _sub(myPointf v){ this.x -= v.x; this.y -= v.y; this.z -= v.z;  }
     /**
      * Static Method : subtract two points and return result
      * @param p,q : points to subtract
@@ -271,7 +271,7 @@ public class myPointf {
      * @param p,q : points to subtract
      * @param r : resulting point of element-wise subtraction of p - q
      */
-    public static void _sub(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x - q.x, p.y - q.y, p.z - q.z); r.set(result);}       //2 pt src, 1 pt dest      
+    public static void _sub(myPointf p, myPointf q, myPointf r){ myPointf result = new myPointf(p.x - q.x, p.y - q.y, p.z - q.z); r.set(result);}
     /**
      * create a new copy point of this point
      * @return
@@ -284,14 +284,14 @@ public class myPointf {
      * @param q : point to find distance from
      * @return : L1 distance from this point to q 
      */    
-    public float _L1Dist(myPointf q){return Math.abs((this.x - q.x)) + Math.abs((this.y - q.y)) + Math.abs((this.z - q.z)); }
+    public float L1Dist(myPointf q){return Math.abs((this.x - q.x)) + Math.abs((this.y - q.y)) + Math.abs((this.z - q.z)); }
     /**
      * Static Method : calculate L1 (Manhattan) distance between passed points.  Manhattan distance is
      * Math.abs((r.x - q.x)) + Math.abs((r.y - q.y)) + Math.abs((r.z - q.z))
      * @param q,r : points to find distance between
      * @return : L1 distance from q to r
      */    
-    public static float _L1Dist(myPointf q, myPointf r){ return q._L1Dist(r);}
+    public static float _L1Dist(myPointf q, myPointf r){ return q.L1Dist(r);}
     
     /**
      * find squared L2 (Euclidean) distance from this point to q.  Squared L2 distance is
@@ -299,7 +299,7 @@ public class myPointf {
      * @param q point to find distance from
      * @return squared L2 Distance from this point to q
      */
-    public float _SqrDist(myPointf q){ float dx=(this.x-q.x), dy=(this.y-q.y), dz=(this.z-q.z);return ((dx*dx) + (dy*dy) + (dz*dz)); }
+    public float sqrDist(myPointf q){ float dx=(this.x-q.x), dy=(this.y-q.y), dz=(this.z-q.z);return ((dx*dx) + (dy*dy) + (dz*dz)); }
     /**
      * Static Method : find squared L2 (Euclidean) distance from point q to point r.  Squared L2 distance is
      * ((r.x - q.x)*(r.x - q.x)) + ((r.y - q.y)*(r.y - q.y)) + ((r.z - q.z)*(r.z - q.z)) 
@@ -313,7 +313,7 @@ public class myPointf {
      * @param q point to find distance to
      * @return L2 Distance from this point to q
      */
-    public float _dist(myPointf q){ float dx=(this.x-q.x), dy=(this.y-q.y), dz=(this.z-q.z);return (float) Math.sqrt(((dx*dx) + (dy*dy) + (dz*dz)));}
+    public float dist(myPointf q){ float dx=(this.x-q.x), dy=(this.y-q.y), dz=(this.z-q.z);return (float) Math.sqrt(((dx*dx) + (dy*dy) + (dz*dz)));}
     /**
      * Static Method : find L2 (Euclidean) distance from point q to point r.  Squared L2 distance is
      * sqrt(((r.x - q.x)*(r.x - q.x)) + ((r.y - q.y)*(r.y - q.y)) + ((r.z - q.z)*(r.z - q.z))) 
@@ -327,7 +327,7 @@ public class myPointf {
      * @param qx,qy,qz : coordinates to find distance to
      * @return L2 Distance from this to [qx,qy,qz]
      */
-    public float _dist(float qx, float qy, float qz){ float dx=(this.x-qx), dy=(this.y-qy), dz=(this.z-qz);return (float) Math.sqrt(((dx*dx) + (dy*dy) + (dz*dz)));}
+    public float dist(float qx, float qy, float qz){ float dx=(this.x-qx), dy=(this.y-qy), dz=(this.z-qz);return (float) Math.sqrt(((dx*dx) + (dy*dy) + (dz*dz)));}
     /**
      * Static Method : find L2 (Euclidean) distance from point q to passed coordinates.  Squared L2 distance is
      * sqrt(((r.x - qx)*(r.x - qx)) + ((r.y - qy)*(r.y - qy)) + ((r.z - qz)*(r.z - qz)))
@@ -374,7 +374,6 @@ public class myPointf {
      * @return
      */
     public final float[] calcNormBaryCoords(myPointf[] cntlPts) {        
-        //pt = u * cntlPts[0] + v * cntlPts[1] + w * cntlPts[2]
         myVectorf AB = new myVectorf(cntlPts[0],cntlPts[1]),
                 AC = new myVectorf(cntlPts[0],cntlPts[2]),
                 AP = new myVectorf(cntlPts[0],this);
@@ -387,7 +386,19 @@ public class myPointf {
             u = 1.0f - v- w;        
         return new float[] {u,v,w};
     }
-
+   
+    /**
+     * given control points and passed normalized barycentric coordinates, calculate resultant point
+     * @param cntlPts
+     * @param pointNBC
+     * @return
+     */    
+    public static final myPointf _calcPointFromNormBaryCoords(myPointf[] cntlPts, float[] pointNBC) {
+        myPointf res = new myPointf();
+        for(int i=0;i<pointNBC.length;++i) {    res._add(myPointf._mult(cntlPts[i], pointNBC[i]));}    
+        return res;
+    }
+ 
     /**
      * Returns array of distances from first point in given point trajectory array to each subsequent point. 
      * @param pts array of points representing a trajectory. 
@@ -414,20 +425,23 @@ public class myPointf {
         for(int i=0;i<pts.length-1;++i) {res += _dist(pts[i],pts[i+1]);}
         if(closed) {res += _dist(pts[pts.length-1], pts[0]);}
         return res;
-    }
-    
+    }    
+
     /**
-     * given control points and passed normalized barycentric coordinates, calculate resultant point
-     * @param cntlPts
-     * @param pointNBC
+     * Returns the index of the closest myPointf in pts array to pt, and the distance in d
+     * @param pts array of points to examine
+     * @param pt point to compare to for distance
+     * @param d [out] float pointer to minimum distance
      * @return
-     */    
-    public static final myPointf _calcPointFromNormBaryCoords(myPointf[] cntlPts, float[] pointNBC) {
-        myPointf res = new myPointf();
-        for(int i=0;i<pointNBC.length;++i) {    res._add(myPointf._mult(cntlPts[i], pointNBC[i]));}    
-        return res;
-    }
-    
+     */
+    public static final int _findClosestPtToPt(myPointf[] pts, myPointf pt, float[] d) {
+        int resIdx = -1;
+        float minSqDist = 99999999, _sqrD;
+        for(int i=0; i<pts.length; ++i){_sqrD = myPointf._SqrDist(pt,pts[i]);if(_sqrD < minSqDist){minSqDist = _sqrD; resIdx = i;}}
+        d[0] = (float) Math.sqrt(minSqDist);            
+        return resIdx;
+    }//_findClosestPtToPt    
+     
     /**
      * calc the rotation of this point by angle a around G on plane described by I, in direction inferred by J(tangent)
      * @param a
@@ -451,7 +465,7 @@ public class myPointf {
      * @param R
      * @return this point rotated
      */
-    public myPointf rotMeAroundPt(myPointf C, myPointf P, myPointf R) { // returns rotated version of Q by angle(CP,CR) parallel to plane (C,P,R)
+    public myPointf rotMeAroundPt(myPointf C, myPointf P, myPointf R) {
         myVectorf I0=myVectorf._unit(C,P), I1=myVectorf._unit(C,R), V=new myVectorf(C,this); 
         double c=myPointf._dist(I0,I1), s=Math.sqrt(1.-(c*c)); 
         if(Math.abs(s)<0.00001) return this;        
@@ -467,7 +481,7 @@ public class myPointf {
      * @param eps
      * @return
      */
-    public boolean clickIn(myPointf p, float eps) { return(_dist(p) < eps);}
+    public boolean clickIn(myPointf p, float eps) { return(dist(p) < eps);}
     
     /**
      * returns if this pttor is equal to passed pttor
@@ -479,30 +493,6 @@ public class myPointf {
         if (b instanceof myPointf v) {return ((this.x == v.x) && (this.y == v.y) && (this.z == v.z));}
         return false;
     }
-    
-    /**
-     * Linearly interpolate between two floating point values
-     * @param a
-     * @param s interpolant
-     * @param b
-     * @return
-     */
-    protected final static float _linInterp(float a, float s, float b) {return (1-s)*a + (s)*b;}
-    
-    /**
-     * Linearly interpolate between two floating point values, restricting result to lie in [min, max]
-     * @param a
-     * @param s interpolant
-     * @param b
-     * @param min
-     * @param max
-     * @return
-     */
-    protected final static float _cappedLinInterp(float a, float s, float b, float min, float max) {
-        float res = (1-s)*a + (s)*b; 
-        return (res > max ? max : res < min ? min : res);
-    }
-   
     public String toStrCSV(){return toStrCSV("%.4f");}    
     public String toStrCSV(String fmt){return "" + String.format(fmt,this.x) + ", " + String.format(fmt,this.y) + ", " + String.format(fmt,this.z);}    
     public String toStrBrf(){return "(" + String.format("%.4f",this.x) + ", " + String.format("%.4f",this.y) + ", " + String.format("%.4f",this.z)+")";}    
